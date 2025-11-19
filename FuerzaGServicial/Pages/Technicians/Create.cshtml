@@ -1,0 +1,216 @@
+﻿@page
+@model CreateModel
+@{
+    ViewData["Title"] = "Crear Técnico";
+}
+
+<div class="container mt-4 mb-5">
+    <h2>Nuevo Técnico</h2>
+
+    <form method="post" class="card card-body shadow-sm" id="technicianForm" novalidate>
+        <div class="row g-3">
+            <!-- Nombre -->
+            <div class="col-md-6">
+                <label asp-for="Form.Name" class="form-label">Nombre *</label>
+                <input asp-for="Form.Name" class="form-control" placeholder="Ingrese nombre"
+                    required minlength="3" maxlength="100"
+                    pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]+$"
+                    title="Solo se permiten letras y espacios." />
+                <div class="invalid-feedback">
+                    El nombre debe tener al menos 3 caracteres y solo letras.
+                </div>
+                <span asp-validation-for="Form.Name" class="text-danger small"></span>
+            </div>
+
+            <!-- Apellido Paterno -->
+            <div class="col-md-6">
+                <label asp-for="Form.FirstLastName" class="form-label">Apellido Paterno *</label>
+                
+                <input asp-for="Form.FirstLastName" class="form-control" placeholder="Ingrese apellido paterno"
+                        required minlength="2" maxlength="100"
+                        pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]+$"
+                        title="Solo se permiten letras y espacios." />
+                
+                <div class="invalid-feedback">
+                    El apellido paterno debe tener al menos 2 caracteres y solo letras.
+                </div>
+                <span asp-validation-for="Form.FirstLastName" class="text-danger small"></span>
+            </div>
+
+            <!-- Apellido Materno -->
+            <div class="col-md-6">
+                <label asp-for="Form.SecondLastName" class="form-label">Apellido Materno</label>
+                
+                <input asp-for="Form.SecondLastName" class="form-control" placeholder="Ingrese apellido materno (opcional)"
+                        minlength="2" maxlength="100"
+                        pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]*$"
+                        title="Solo se permiten letras y espacios si se llena." />
+                
+                <div class="invalid-feedback">
+                    El apellido materno debe tener al menos 2 caracteres y solo letras.
+                </div>
+                
+                <span asp-validation-for="Form.SecondLastName" class="text-danger small"></span>
+            </div>
+
+            <!-- Teléfono -->
+            <div class="col-md-6">
+                <label asp-for="Form.PhoneNumber" class="form-label">Teléfono *</label>
+                <input asp-for="Form.PhoneNumber" class="form-control" placeholder="Ej: 76543210" value=""
+                       type="tel" pattern="[0-9]{8}" required />
+                <span asp-validation-for="Form.PhoneNumber" class="text-danger small"></span>
+                <div class="invalid-feedback">
+                    El teléfono debe tener exactamente 8 dígitos.
+                </div>
+            </div>
+
+            <!-- Email -->
+            <div class="col-md-6">
+                <label asp-for="Form.Email" class="form-label">Correo Electrónico *</label>
+                <input asp-for="Form.Email" class="form-control" placeholder="ejemplo@correo.com"
+                       type="email" required maxlength="255" />
+                <span asp-validation-for="Form.Email" class="text-danger small"></span>
+                <div class="invalid-feedback">
+                    Ingrese un correo electrónico válido.
+                </div>
+            </div>
+
+            <!-- Documento -->
+            <div class="col-md-6">
+                <div class="row g-2 align-items-start">
+                    <div class="col-md-8">
+                        <label asp-for="Form.DocumentNumber" class="form-label">CI *</label>
+                        <input asp-for="Form.DocumentNumber" class="form-control" placeholder="Ej: 1234567"
+                               type="text" minlength="6" maxlength="10" pattern="[0-9]{6,10}" required />
+                        <span asp-validation-for="Form.DocumentNumber" class="text-danger small"></span>
+                        <div class="invalid-feedback">
+                            El CI debe contener entre 6 y 10 dígitos.
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="Form.DocumentExtension" class="form-label">Complemento</label>
+                        <input asp-for="Form.DocumentExtension" id="Form_Complement" class="form-control" placeholder="Ej: 1A"
+                               maxlength="2" minlength="2" pattern="^([1-9][A-Z])?$"
+                               title="Formato: dígito 1-9 seguido de letra mayúscula (ej. 1A)" />
+                        <span asp-validation-for="Form.DocumentExtension" class="text-danger small"></span>
+                        <div class="invalid-feedback">
+                            Formato: dígito 1-9 seguido de letra mayúscula.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Salario -->
+            <div class="col-md-6">
+                <label asp-for="Form.BaseSalary" class="form-label">Salario Base (Bs.-)*</label>
+                
+                <input asp-for="Form.BaseSalary" class="form-control" placeholder="Ej: 2500.00"
+                        required pattern="^\d+(\.\d{1,2})?$"
+                        title="Solo se permiten números y un punto decimal (hasta dos decimales)."
+                        inputmode="decimal" />
+                
+                <div class="invalid-feedback">
+                    Ingrese un salario válido mayor a 0 con hasta 2 decimales.
+                </div>
+                
+                <span asp-validation-for="Form.BaseSalary" class="text-danger small"></span>
+            </div>
+
+            <!-- Dirección -->
+            <div class="col-12">
+                <label asp-for="Form.Address" class="form-label">Dirección *</label>
+                <textarea asp-for="Form.Address" class="form-control" rows="2" placeholder="Ingrese la dirección completa"
+                          required minlength="5" maxlength="200"></textarea>
+                <span asp-validation-for="Form.Address" class="text-danger small"></span>
+                <div class="invalid-feedback">
+                    La dirección debe tener al menos 5 caracteres y no más de 200.
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <button type="submit" id="btnSubmit" class="btn btn-dark">
+                <i class="fas fa-save"></i> <span class="btn-text">Guardar</span>
+                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+            </button>
+            <a asp-page="/Technicians/TechnicianPage" class="btn btn-outline-secondary">
+                <i class="fas fa-times"></i> Cancelar
+            </a>
+        </div>
+
+        <div class="mt-3">
+            <small class="text-muted">* Campos obligatorios</small>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            const form = $('#technicianForm')[0];
+
+            // Validaciones de letras
+            function letraPermitida(e) {
+                const allowed = /^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]$/;
+                const ch = String.fromCharCode(e.which);
+                if (!allowed.test(ch) && e.which !== 8 && e.which !== 0) e.preventDefault();
+            }
+            ['#Form_Name','#Form_FirstLastName','#Form_SecondLastName'].forEach(id => {
+                $(id).on('keypress', letraPermitida);
+            });
+
+            // Teléfono y CI solo números
+            $('#Form_PhoneNumber, #Form_DocumentNumber').on('keypress', function (e) {
+                if (e.which < 48 || e.which > 57) e.preventDefault();
+            });
+
+            $('#Form_PhoneNumber').on('input', function () {
+                if (this.value.length > 8) this.value = this.value.slice(0, 8);
+            });
+            $('#Form_DocumentNumber').on('input', function () {
+                if (this.value.length > 10) this.value = this.value.slice(0, 10);
+            });
+
+            // Salario decimal
+            $('#Form_BaseSalary').on('keypress', function(e){
+                const ch = String.fromCharCode(e.which);
+                const allowed = /^[0-9.]$/;
+                if (!allowed.test(ch) && e.which !== 8 && e.which !== 0) e.preventDefault();
+                if (ch === '.' && this.value.includes('.')) e.preventDefault();
+            }).on('input', function() {
+                const match = this.value.match(/^(\d+(\.\d{0,2})?)?/);
+                if(match) this.value = match[0];
+            });
+
+            // Alertas dinámicas
+            $('input, textarea').on('input', function () {
+                const field = $(this);
+                const validIcon = field.siblings('.valid-icon');
+                const invalidIcon = field.siblings('.invalid-icon');
+                if (this.checkValidity()) {
+                    field.removeClass('is-invalid').addClass('is-valid');
+                    validIcon.removeClass('d-none');
+                    invalidIcon.addClass('d-none');
+                } else {
+                    field.removeClass('is-valid').addClass('is-invalid');
+                    validIcon.addClass('d-none');
+                    invalidIcon.removeClass('d-none');
+                }
+            });
+
+            // Submit con animación
+            $('#technicianForm').on('submit', function(e){
+                if(!form.checkValidity()){
+                    e.preventDefault();
+                    form.classList.add('was-validated');
+                    return;
+                }
+
+                const btn = $('#btnSubmit');
+                btn.prop('disabled', true);
+                btn.find('.btn-text').text('Guardando...');
+                btn.find('.spinner-border').removeClass('d-none');
+            });
+        });
+    </script>
+}

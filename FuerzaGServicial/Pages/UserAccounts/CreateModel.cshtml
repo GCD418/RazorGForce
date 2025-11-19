@@ -1,0 +1,176 @@
+﻿@page
+@model CreateModel
+@{
+    ViewData["Title"] = "Nuevo Usuario";
+}
+
+<div class="container mt-4 mb-5">
+    <h2>Nuevo Usuario</h2>
+
+    <form method="post" class="card card-body shadow-sm" id="userAccountForm" novalidate>
+        <div class="row g-3">
+            <!-- Nombre -->
+            <div class="col-md-6">
+                <label asp-for="UserAccount.Name" class="form-label">Nombre *</label>
+                <input asp-for="UserAccount.Name" class="form-control" placeholder="Ingrese el nombre"
+                       required minlength="3" maxlength="100"
+                       pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñüÜ\s'-]+$"
+                       title="Solo letras, espacios, guiones y apóstrofos." />
+                <div class="invalid-feedback">El nombre debe tener al menos 3 caracteres y solo letras.</div>
+            </div>
+
+            <!-- Apellido Paterno -->
+            <div class="col-md-6">
+                <label asp-for="UserAccount.FirstLastName" class="form-label">Apellido Paterno *</label>
+                <input asp-for="UserAccount.FirstLastName" class="form-control" placeholder="Ingrese apellido paterno"
+                       required minlength="2" maxlength="100"
+                       pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñüÜ\s'-]+$" />
+                <div class="invalid-feedback">El apellido paterno debe tener al menos 2 caracteres y solo letras.</div>
+            </div>
+
+            <!-- Apellido Materno (opcional) -->
+            <div class="col-md-6">
+                <label asp-for="UserAccount.SecondLastName" class="form-label">Apellido Materno</label>
+                <input asp-for="UserAccount.SecondLastName" class="form-control" placeholder="Ingrese apellido materno (opcional)"
+                       minlength="2" maxlength="100"
+                       pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñüÜ\s'-]*$" />
+                <div class="invalid-feedback">El apellido materno debe tener al menos 2 caracteres y solo letras si se rellena.</div>
+            </div>
+
+            <!-- Teléfono -->
+            <div class="col-md-6">
+                <label asp-for="UserAccount.PhoneNumber" class="form-label">Teléfono *</label>
+                <input asp-for="UserAccount.PhoneNumber" type="tel" class="form-control" value=""
+                       pattern="[0-9]{8}" required placeholder="Ej: 76543210" />
+                <div class="invalid-feedback">El teléfono debe tener exactamente 8 dígitos.</div>
+            </div>
+
+            <!-- Email -->
+            <div class="col-md-6">
+                <label asp-for="UserAccount.Email" class="form-label">Correo Electrónico *</label>
+                <input asp-for="UserAccount.Email" type="email" required maxlength="255" placeholder="ejemplo@correo.com" class="form-control" />
+                <div class="invalid-feedback">Ingrese un correo electrónico válido.</div>
+            </div>
+
+            <!-- Documento -->
+            <div class="col-md-6">
+                <div class="row g-2 align-items-start">
+                    <div class="col-md-8">
+                        <label asp-for="UserAccount.DocumentNumber" class="form-label">CI / Documento *</label>
+                        <input asp-for="UserAccount.DocumentNumber" type="text" class="form-control"
+                               placeholder="Ej: 1234567" required minlength="6" maxlength="9" pattern="[0-9]{6,9}" />
+                        <div class="invalid-feedback">El CI debe contener entre 6 y 9 dígitos.</div>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="UserAccount.DocumentExtension" class="form-label">Complemento</label>
+                        <input asp-for="UserAccount.DocumentExtension" id="Form_Complement"
+                               class="form-control" placeholder="Ej: 1A"
+                               maxlength="2" pattern="^([1-9][A-Z])?$"
+                               title="Formato: dígito 1-9 seguido de letra mayúscula, opcional." />
+                        <div class="invalid-feedback">Formato: dígito 1-9 seguido de letra mayúscula.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rol -->
+            <div class="col-md-6">
+                <label asp-for="UserAccount.Role" class="form-label">Rol *</label>
+                <select asp-for="UserAccount.Role" class="form-select" required>
+                    <option value="">-- Seleccione un rol --</option>
+                    <option value="CEO">Propietario</option>
+                    <option value="Manager">Gerente</option>
+                </select>
+                <div class="invalid-feedback">Seleccione un rol.</div>
+            </div>
+
+            <!-- Nombre de Usuario -->
+            <div class="col-md-6 mt-3">
+                <label asp-for="UserAccount.UserName" class="form-label">Nombre de Usuario</label>
+                <input asp-for="UserAccount.UserName" class="form-control" readonly placeholder="Se generará automáticamente" />
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <button type="submit" id="btnSubmit" class="btn btn-dark">
+                <i class="fas fa-save"></i> <span class="btn-text">Guardar</span>
+                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+            </button>
+            <a asp-page="/UserAccounts/UserPage" class="btn btn-outline-secondary">
+                <i class="fas fa-times"></i> Cancelar
+            </a>
+        </div>
+
+        <div class="mt-3">
+            <small class="text-muted">* Campos obligatorios</small>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        $(document).ready(function () {
+            var form = $('#userAccountForm')[0];
+            var nombreInput = $('#UserAccount_Name')[0];
+            var apellidoInput = $('#UserAccount_FirstLastName')[0];
+            var segundoApellidoInput = $('#UserAccount_SecondLastName')[0];
+            var docInput = $('#UserAccount_DocumentNumber')[0];
+            var phoneInput = $('#UserAccount_PhoneNumber')[0];
+            var usernameInput = $('#UserAccount_UserName')[0];
+
+            // Solo letras, espacios, guiones y apóstrofos
+            function letraPermitida(e) {
+                const allowed = /^[A-Za-zÁÉÍÓÚáéíóúÑñüÜ\s'-]$/;
+                const ch = String.fromCharCode(e.which);
+                if (!allowed.test(ch) && e.which !== 8 && e.which !== 0) e.preventDefault();
+            }
+            [nombreInput, apellidoInput, segundoApellidoInput].forEach(el => el && el.addEventListener("keypress", letraPermitida));
+
+            // Solo números
+            [phoneInput, docInput].forEach(el => el && $(el).on('keypress', function(e){ if(e.which < 48 || e.which > 57) e.preventDefault(); }));
+            phoneInput.addEventListener('input', function(){ if(this.value.length > 8) this.value = this.value.slice(0,8); });
+            docInput.addEventListener('input', function(){ if(this.value.length > 9) this.value = this.value.slice(0,9); });
+
+            // Generar nombre de usuario automáticamente
+            function generarUsername() {
+                const nombre = nombreInput.value.trim().toLowerCase() || "";
+                let apellido = apellidoInput.value.trim().toLowerCase() || "";
+                const doc = docInput.value.trim() || "";
+                apellido = apellido.replace(/\s+/g, '');
+                usernameInput.value = (nombre && apellido && doc.length >= 3)
+                    ? `${nombre.charAt(0)}.${apellido}${doc.slice(-3)}`
+                    : "";
+            }
+            [nombreInput, apellidoInput, docInput].forEach(el => el && el.addEventListener("input", generarUsername));
+
+            // Validaciones dinámicas
+            $('input, select').on('input', function () {
+                const field = $(this);
+                if (!field.prop('required') && field.val().trim() === '') {
+                    field.removeClass('is-valid is-invalid');
+                    return;
+                }
+                if (this.checkValidity()) {
+                    field.removeClass('is-invalid').addClass('is-valid');
+                } else {
+                    field.removeClass('is-valid').addClass('is-invalid');
+                }
+            });
+
+            // Submit con animación
+            $(form).on('submit', function(e){
+                if(!form.checkValidity()){
+                    e.preventDefault();
+                    form.classList.add('was-validated');
+                    return;
+                }
+
+                const btn = $('#btnSubmit');
+                btn.prop('disabled', true);
+                btn.find('.btn-text').text('Guardando...');
+                btn.find('.spinner-border').removeClass('d-none');
+            });
+        });
+    </script>
+}
