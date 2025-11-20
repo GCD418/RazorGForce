@@ -7,6 +7,7 @@ using FuerzaGServicial.Services.Facades.Technicians;
 using UserAccountService.Domain.Entities;
 using UserAccountService.Domain.Ports;
 
+
 namespace FuerzaGServicial.Pages.Technicians;
 
 [Authorize(Roles = "Manager,CEO")]

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using FuerzaGServicial.Models.Services;
 using FuerzaGServicial.Services.Facades.Services;
-using FuerzaGServicial.Models.UserAccount;
+using FuerzaGServicial.Models.UserAccounts;
 
 namespace FuerzaGServicial.Pages.Services;
 

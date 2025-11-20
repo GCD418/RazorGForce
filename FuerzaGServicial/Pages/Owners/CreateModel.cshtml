@@ -8,80 +8,84 @@
     <h2>Nuevo Dueño</h2>
 
     <form method="post" class="card card-body shadow-sm" id="ownerForm" novalidate>
+
         <div class="row g-3">
+
             <div class="col-md-6">
                 <label asp-for="Owner.Name" class="form-label">Nombre *</label>
-                <input asp-for="Owner.Name" class="form-control" placeholder="Ingrese el nombre"
-                       required minlength="3" maxlength="100"
+                <input asp-for="Owner.Name" class="form-control" required minlength="3" maxlength="100"
                        pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]+$" />
-                <div class="invalid-feedback">El nombre debe tener al menos 3 caracteres y solo letras.</div>
+                <div class="invalid-feedback">Nombre inválido.</div>
             </div>
 
             <div class="col-md-6">
                 <label asp-for="Owner.FirstLastname" class="form-label">Apellido Paterno *</label>
-                <input asp-for="Owner.FirstLastname" class="form-control" placeholder="Ingrese apellido paterno"
-                       required minlength="2" maxlength="100"
+                <input asp-for="Owner.FirstLastname" class="form-control" required minlength="2" maxlength="100"
                        pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]+$" />
-                <div class="invalid-feedback">El apellido paterno debe tener al menos 2 caracteres y solo letras.</div>
+                <div class="invalid-feedback">Apellido paterno inválido.</div>
             </div>
 
             <div class="col-md-6">
                 <label asp-for="Owner.SecondLastname" class="form-label">Apellido Materno</label>
-                <input asp-for="Owner.SecondLastname" class="form-control" placeholder="Apellido materno (opcional)"
-                       minlength="2" maxlength="100"
+                <input asp-for="Owner.SecondLastname" class="form-control" minlength="2" maxlength="100"
                        pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]*$" />
-                <div class="invalid-feedback">El apellido materno debe tener al menos 2 caracteres y solo letras.</div>
+                <div class="invalid-feedback">Apellido materno inválido.</div>
             </div>
 
             <div class="col-md-6">
                 <label asp-for="Owner.PhoneNumber" class="form-label">Teléfono *</label>
-                <input asp-for="Owner.PhoneNumber" class="form-control" placeholder="Ej: 76543210" value=""
-                       type="tel" pattern="[0-9]{8}" required />
-                <div class="invalid-feedback">El teléfono debe tener exactamente 8 dígitos.</div>
+                <input asp-for="Owner.PhoneNumber" class="form-control" type="tel"
+                       pattern="[0-9]{8}" required />
+                <div class="invalid-feedback">Número inválido.</div>
             </div>
 
             <div class="col-md-6">
-                <label asp-for="Owner.Email" class="form-label">Correo Electrónico *</label>
-                <input asp-for="Owner.Email" class="form-control" placeholder="ejemplo@correo.com"
-                       type="email" required maxlength="255" />
-                <div class="invalid-feedback">Ingrese un correo electrónico válido.</div>
+                <label asp-for="Owner.Email" class="form-label">Correo *</label>
+                <input asp-for="Owner.Email" class="form-control" type="email" required maxlength="255" />
+                <div class="invalid-feedback">Correo inválido.</div>
             </div>
 
             <div class="col-md-6">
                 <div class="row g-2">
+
                     <div class="col-md-8">
-                        <label asp-for="Owner.DocumentNumber" class="form-label">Carnet de Identidad *</label>
-                        <input asp-for="Owner.DocumentNumber" class="form-control" placeholder="Ej: 1234567"
-                               type="text" minlength="6" maxlength="9" pattern="[0-9]{6,9}" required />
-                        <div class="invalid-feedback">El CI debe contener entre 6 y 9 dígitos.</div>
+                        <label asp-for="Owner.DocumentNumber" class="form-label">CI *</label>
+                        <input asp-for="Owner.DocumentNumber" class="form-control"
+                               minlength="6" maxlength="10" pattern="[0-9]{6,10}" required />
+                        <div class="invalid-feedback">CI inválido.</div>
                     </div>
+
                     <div class="col-md-4">
-                        <label asp-for="Owner.DocumentExtension" class="form-label">Complemento</label>
-                        <input asp-for="Owner.DocumentExtension" class="form-control" placeholder="Ej: 1A"
+                        <label asp-for="Owner.DocumentExtension" class="form-label">Comp.</label>
+                        <input asp-for="Owner.DocumentExtension" class="form-control"
                                maxlength="2" minlength="2" pattern="^([1-9][A-Z])?$" />
-                        <div class="invalid-feedback">Formato: dígito 1-9 seguido de letra mayúscula.</div>
+                        <div class="invalid-feedback">Complemento inválido.</div>
                     </div>
+
                 </div>
             </div>
 
             <div class="col-12">
                 <label asp-for="Owner.Address" class="form-label">Dirección *</label>
-                <textarea asp-for="Owner.Address" class="form-control" rows="2"
-                          required minlength="5" maxlength="100"></textarea>
-                <div class="invalid-feedback">La dirección debe tener al menos 5 caracteres y máximo 100.</div>
+                <textarea asp-for="Owner.Address" class="form-control" required minlength="5" maxlength="100"></textarea>
+                <div class="invalid-feedback">Dirección inválida.</div>
             </div>
+
         </div>
 
         <div class="mt-4">
-            <button type="button" class="btn btn-dark" id="btnSave">
+            <button type="submit" class="btn btn-dark" id="btnSave">
                 <i class="fas fa-save me-1"></i> Guardar
             </button>
+
             <a asp-page="/Owners/OwnerPage" class="btn btn-outline-secondary">
                 <i class="fas fa-times me-1"></i> Cancelar
             </a>
         </div>
+
     </form>
 </div>
+
 
 @section Scripts {
     <script>

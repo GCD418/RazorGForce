@@ -2,44 +2,51 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using OwnerService.Domain.Entities;
 using UserAccountService.Domain.Entities;
 using UserAccountService.Domain.Ports;
+using FuerzaGServicial.Services.Facades.Owners;
+using FuerzaGServicial.ModelsD.Owners;
+using FuerzaGServicial.Models.UserAccounts;
 
 namespace FuerzaGServicial.Pages.Owners;
 
 [Authorize(Roles = UserRoles.Manager)]
 public class OwnerPage : PageModel
 {
-    public IEnumerable<Owner> Owners { get; set; }
-    private readonly OwnerService.Application.Services.OwnerService  _ownerService;
+    private readonly IOwnerFacade _ownerFacade;
     private readonly IDataProtector _protector;
     private readonly ISessionManager _sessionManager;
 
-    public OwnerPage(OwnerService.Application.Services.OwnerService ownerService, 
+    public OwnerPage(
+        IOwnerFacade ownerFacade,
         IDataProtectionProvider provider,
         ISessionManager sessionManager)
     {
-        _ownerService = ownerService;
+        _ownerFacade = ownerFacade;
         _protector = provider.CreateProtector("OwnerProtector");
         _sessionManager = sessionManager;
     }
-    
+
+    public List<OwnerModelResponse> Owners { get; set; } = new();
+
     public async Task<IActionResult> OnGetAsync()
     {
-        Owners = await _ownerService.GetAll();
+        Owners = await _ownerFacade.GetAll();
         return Page();
     }
 
     public string EncryptId(int id)
     {
-        return  _protector.Protect(id.ToString());
+        return _protector.Protect(id.ToString());
     }
 
     public async Task<IActionResult> OnPostDeleteAsync(string id)
     {
         var decryptedId = int.Parse(_protector.Unprotect(id));
-        await _ownerService.DeleteById(decryptedId, _sessionManager.UserId ?? 9999);
+        var userId = _sessionManager.UserId ?? 9999;
+
+        await _ownerFacade.Delete(decryptedId, userId);
+
         return RedirectToPage();
     }
 }
