@@ -1,4 +1,5 @@
 using FuerzaGServicial.Models.Auth;
+using FuerzaGServicial.Models.Common;
 using FuerzaGServicial.Models.UserAccounts;
 using System.Net.Http.Json;
 
@@ -35,20 +36,76 @@ public class UserAccountApiClient
         return await _http.GetFromJsonAsync<UserAccount>($"api/useraccounts/{id}");
     }
 
-    public async Task<bool> CreateAsync(UserAccount userAccount)
+    public async Task<ApiResponse<int>> CreateAsync(UserAccount userAccount)
     {
         var response = await _http.PostAsJsonAsync("api/useraccounts/create", userAccount);
-        return response.IsSuccessStatusCode;
+        
+        if (response.IsSuccessStatusCode)
+        {
+            var successResponse = await response.Content.ReadFromJsonAsync<SuccessResponse>();
+            return new ApiResponse<int>
+            {
+                Success = true,
+                Data = successResponse?.Id ?? 0,
+                Message = successResponse?.Message ?? "Usuario creado exitosamente"
+            };
+        }
+        
+        if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+        {
+            var errorResponse = await response.Content.ReadFromJsonAsync<ValidationErrorResponse>();
+            return new ApiResponse<int>
+            {
+                Success = false,
+                Message = errorResponse?.Message ?? "Error de validación",
+                Errors = errorResponse?.Errors ?? new List<string>()
+            };
+        }
+        
+        return new ApiResponse<int>
+        {
+            Success = false,
+            Message = "Error al crear el usuario",
+            Errors = new List<string> { response.ReasonPhrase ?? "Error desconocido" }
+        };
     }
 
-    public async Task<bool> UpdateAsync(UserAccount userAccount, int userId)
+    public async Task<ApiResponse<bool>> UpdateAsync(UserAccount userAccount, int userId)
     {
         var request = new HttpRequestMessage(HttpMethod.Put, "api/useraccounts");
         request.Headers.Add("userId", userId.ToString());
         request.Content = JsonContent.Create(userAccount);
         
         var response = await _http.SendAsync(request);
-        return response.IsSuccessStatusCode;
+        
+        if (response.IsSuccessStatusCode)
+        {
+            var successResponse = await response.Content.ReadFromJsonAsync<SuccessResponse>();
+            return new ApiResponse<bool>
+            {
+                Success = true,
+                Data = true,
+                Message = successResponse?.Message ?? "Usuario actualizado exitosamente"
+            };
+        }
+        
+        if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+        {
+            var errorResponse = await response.Content.ReadFromJsonAsync<ValidationErrorResponse>();
+            return new ApiResponse<bool>
+            {
+                Success = false,
+                Message = errorResponse?.Message ?? "Error de validación",
+                Errors = errorResponse?.Errors ?? new List<string>()
+            };
+        }
+        
+        return new ApiResponse<bool>
+        {
+            Success = false,
+            Message = "Error al actualizar el usuario",
+            Errors = new List<string> { response.ReasonPhrase ?? "Error desconocido" }
+        };
     }
 
     public async Task<bool> DeleteByIdAsync(int id, int userId)

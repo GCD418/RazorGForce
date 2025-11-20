@@ -29,15 +29,19 @@ public class CreateModel : PageModel
 
     public async Task<IActionResult> OnPostAsync()
     {
+        ValidationErrors.Clear();
+        
         if (!ModelState.IsValid)
         {
             return Page();
         }
 
-        var isSuccess = await _authFacade.CreateUserAccountAsync(UserAccount);
-        if (!isSuccess)
+        var response = await _authFacade.CreateUserAccountAsync(UserAccount);
+        
+        if (!response.Success)
         {
-            ModelState.AddModelError(string.Empty, "No se pudo crear el usuario. Posiblemente el nombre de usuario ya existe.");
+            ValidationErrors = response.Errors;
+            ModelState.AddModelError(string.Empty, response.Message);
             return Page();
         }
 

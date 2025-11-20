@@ -48,6 +48,8 @@ public class EditModel : PageModel
 
     public async Task<IActionResult> OnPostAsync()
     {
+        ValidationErrors.Clear();
+        
         if (!ModelState.IsValid)
         {
             return Page();
@@ -58,14 +60,16 @@ public class EditModel : PageModel
         if (existingUser != null)
             UserAccount.UserName = existingUser.UserName;
 
-        var isSuccess = await _userAccountFacade.UpdateAsync(UserAccount, _sessionManager.UserId ?? 9999);
-        if (!isSuccess)
+        var response = await _userAccountFacade.UpdateAsync(UserAccount, _sessionManager.UserId ?? 9999);
+        
+        if (!response.Success)
         {
-            ModelState.AddModelError(string.Empty, "No se pudo actualizar el usuario.");
+            ValidationErrors = response.Errors;
+            ModelState.AddModelError(string.Empty, response.Message);
             return Page();
         }
 
-        TempData["SuccessMessage"] = "Usuario actualizado correctamente.";
+        TempData["SuccessMessage"] = response.Message;
         return RedirectToPage("/UserAccounts/UserPage");
     }
 }
