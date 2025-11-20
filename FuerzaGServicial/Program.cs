@@ -1,4 +1,7 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using FuerzaGServicial.Facades.Services;
+using FuerzaGServicial.Services.Facades.Services;
+
+var builder = WebApplication.CreateBuilder(args);
 
 // ----------------------------
 // 1️⃣ Agregar Razor Pages
@@ -35,8 +38,8 @@ builder.Services.AddHttpClient<FuerzaGServicial.Services.Clients.UserAccountApiC
 // ----------------------------
 // 4️⃣ Registrar fachadas y servicios
 // ----------------------------
-builder.Services.AddScoped<FuerzaGServicial.Services.Facades.Services.IServiceFacade,
-                           FuerzaGServicial.Services.Facades.Services.ServiceFacade>();
+builder.Services.AddScoped<IServiceFacade,
+                           ServiceFacade>();
 
 builder.Services.AddScoped<FuerzaGServicial.Facades.Auth.AuthFacade>();
 builder.Services.AddScoped<FuerzaGServicial.Facades.UserAccounts.UserAccountFacade>();
