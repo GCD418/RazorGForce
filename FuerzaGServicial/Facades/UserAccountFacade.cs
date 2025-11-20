@@ -1,7 +1,8 @@
+using FuerzaGServicial.Models.Common;
 using FuerzaGServicial.Models.UserAccounts;
-using FuerzaGServicial.Services.Clients;
+using FuerzaGServicial.Services;
 
-namespace FuerzaGServicial.Facades.UserAccounts;
+namespace FuerzaGServicial.Facades;
 
 public class UserAccountFacade
 {
@@ -22,12 +23,12 @@ public class UserAccountFacade
         return await _apiClient.GetByIdAsync(id);
     }
 
-    public async Task<bool> CreateAsync(UserAccount userAccount)
+    public async Task<ApiResponse<int>> CreateAsync(UserAccount userAccount)
     {
         return await _apiClient.CreateAsync(userAccount);
     }
 
-    public async Task<bool> UpdateAsync(UserAccount userAccount, int userId)
+    public async Task<ApiResponse<bool>> UpdateAsync(UserAccount userAccount, int userId)
     {
         return await _apiClient.UpdateAsync(userAccount, userId);
     }

@@ -1,12 +1,12 @@
-using FuerzaGServicial.Models.Auth;
-using FuerzaGServicial.Models.UserAccounts;
-using FuerzaGServicial.Services.Clients;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using FuerzaGServicial.Models.Auth;
+using FuerzaGServicial.Models.Common;
+using FuerzaGServicial.Models.UserAccounts;
+using FuerzaGServicial.Services;
+using Microsoft.AspNetCore.Authentication;
 
-namespace FuerzaGServicial.Facades.Auth;
+namespace FuerzaGServicial.Facades;
 
 public class AuthFacade
 {
@@ -145,7 +145,7 @@ public class AuthFacade
         }
     }
 
-    public async Task<bool> CreateUserAccountAsync(UserAccount userAccount)
+    public async Task<ApiResponse<int>> CreateUserAccountAsync(UserAccount userAccount)
     {
         return await _apiClient.CreateAsync(userAccount);
     }

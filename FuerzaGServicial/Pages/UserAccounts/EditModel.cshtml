@@ -7,6 +7,20 @@
 <div class="container mt-4 mb-5">
     <h2 class="mb-3">Editar Usuario</h2>
 
+    @if (Model.ValidationErrors.Any())
+    {
+        <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+            <h5 class="alert-heading">Errores de validación:</h5>
+            <ul class="mb-0">
+                @foreach (var error in Model.ValidationErrors)
+                {
+                    <li>@error</li>
+                }
+            </ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
     <form method="post" class="card card-body shadow-sm" id="userAccountForm" novalidate>
         <input type="hidden" asp-for="UserAccount.Id" />
 
