@@ -2,8 +2,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using UserAccountService.Domain.Entities;
-using UserAccountService.Domain.Ports;
+using FuerzaGServicial.Models.UserAccounts;
+using FuerzaGServicial.Facades.UserAccounts;
+using FuerzaGServicial.Services.Session;
 
 namespace FuerzaGServicial.Pages.UserAccounts;
 
@@ -11,22 +12,23 @@ namespace FuerzaGServicial.Pages.UserAccounts;
 public class UserPageModel : PageModel
 {
     public IEnumerable<UserAccount> UserAccounts { get; set; } = new List<UserAccount>();
-    private readonly UserAccountService.Application.Services.UserAccountService _userAccountService;
+    private readonly UserAccountFacade _userAccountFacade;
     private readonly IDataProtector _protector;
-    private readonly ISessionManager _sessionManager;
+    private readonly JwtSessionManager _sessionManager;
 
-    public UserPageModel(UserAccountService.Application.Services.UserAccountService userAccountService,
+    public UserPageModel(
+        UserAccountFacade userAccountFacade,
         IDataProtectionProvider provider,
-        ISessionManager sessionManager)
+        JwtSessionManager sessionManager)
     {
-        _userAccountService = userAccountService;
+        _userAccountFacade = userAccountFacade;
         _protector = provider.CreateProtector("UserAccountProtector");
         _sessionManager = sessionManager;
     }
 
     public async Task<IActionResult> OnGetAsync()
     {
-        UserAccounts = await _userAccountService.GetAll();
+        UserAccounts = await _userAccountFacade.GetAllAsync();
         return Page();
     }
 
@@ -41,7 +43,7 @@ public class UserPageModel : PageModel
             return RedirectToPage();
 
         var decryptedId = int.Parse(_protector.Unprotect(id));
-        await _userAccountService.DeleteById(decryptedId, _sessionManager.UserId ?? 9999);
+        await _userAccountFacade.DeleteByIdAsync(decryptedId, _sessionManager.UserId ?? 9999);
         return RedirectToPage();
     }
 }

@@ -7,10 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-	  <ProjectReference Include="..\ServiceService\ServiceService.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
       <_ContentIncludedByDefault Remove="Pages\Reports\BrandStatistics.cshtml" />
       <_ContentIncludedByDefault Remove="Pages\Reports\Index.cshtml" />
       <_ContentIncludedByDefault Remove="Pages\Reports\VehicleReport.cshtml" />
@@ -23,6 +19,10 @@
       <Folder Include="Models\UserAccounts\" />
       <Folder Include="Models\Technicians\" />
       <Folder Include="Models\Owners\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.15.0" />
     </ItemGroup>
 
 </Project>

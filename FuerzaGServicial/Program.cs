@@ -1,28 +1,68 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using FuerzaGServicial.Facades.Services;
+using FuerzaGServicial.Services.Facades.Services;
+
+var builder = WebApplication.CreateBuilder(args);
 
 // ----------------------------
 // 1️⃣ Agregar Razor Pages
 // ----------------------------
 builder.Services.AddRazorPages();
 
-// ----------------------------
-// 2️⃣ Leer URL del microservicio desde appsettings.json
-// ----------------------------
-var serviceApiUrl = builder.Configuration["ApiSettings:ServiceMicroserviceUrl"];
+builder.Services.AddHttpContextAccessor();
 
 // ----------------------------
-// 3️⃣ Registrar HttpClient para el microservicio
+// 1.5️⃣ Configurar autenticación basada en cookies (para Razor Pages)
 // ----------------------------
+builder.Services.AddAuthentication("CookieAuth")
+    .AddCookie("CookieAuth", options =>
+    {
+        options.LoginPath = "/Login";
+        options.LogoutPath = "/Logout";
+        options.AccessDeniedPath = "/AccessDenied";
+        options.ExpireTimeSpan = TimeSpan.FromHours(1);
+        options.SlidingExpiration = true;
+    });
+
+builder.Services.AddAuthorization();
+
+// ----------------------------
+// 2️⃣ Leer URLs de los microservicios desde appsettings.json
+// ----------------------------
+var serviceApiUrl = builder.Configuration["ApiSettings:ServiceMicroserviceUrl"];
+var userAccountApiUrl = builder.Configuration["ApiSettings:UserAccountMicroserviceUrl"];
+
+// ----------------------------
+// 3️⃣ Registrar HttpClients para los microservicios
+// ----------------------------
+
+// Registrar el JwtHttpMessageHandler como Transient (para HttpClient)
+builder.Services.AddTransient<FuerzaGServicial.Services.Handlers.JwtHttpMessageHandler>();
+
+// ServiceApiClient con JWT handler
 builder.Services.AddHttpClient<FuerzaGServicial.Services.Clients.ServiceApiClient>(client =>
 {
     client.BaseAddress = new Uri(serviceApiUrl);
-});
+})
+.AddHttpMessageHandler<FuerzaGServicial.Services.Handlers.JwtHttpMessageHandler>();
+
+// UserAccountApiClient con JWT handler
+builder.Services.AddHttpClient<FuerzaGServicial.Services.Clients.UserAccountApiClient>(client =>
+{
+    client.BaseAddress = new Uri(userAccountApiUrl);
+})
+.AddHttpMessageHandler<FuerzaGServicial.Services.Handlers.JwtHttpMessageHandler>();
 
 // ----------------------------
-// 4️⃣ Registrar la fachada
+// 4️⃣ Registrar fachadas y servicio
 // ----------------------------
-builder.Services.AddScoped<FuerzaGServicial.Services.Facades.Services.IServiceFacade,
-                           FuerzaGServicial.Services.Facades.Services.ServiceFacade>();
+builder.Services.AddScoped<IServiceFacade,
+                           ServiceFacade>();
+
+builder.Services.AddScoped<FuerzaGServicial.Facades.Auth.AuthFacade>();
+builder.Services.AddScoped<FuerzaGServicial.Facades.UserAccounts.UserAccountFacade>();
+builder.Services.AddScoped<FuerzaGServicial.Services.Session.JwtSessionManager>();
+
+builder.Services.AddDataProtection();
 
 // ----------------------------
 // 5️⃣ Construir app
