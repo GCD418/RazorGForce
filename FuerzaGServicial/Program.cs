@@ -20,15 +20,17 @@ var userAccountApiUrl = builder.Configuration["ApiSettings:UserAccountMicroservi
 // 3️⃣ Registrar HttpClients para los microservicios
 // ----------------------------
 
-builder.Services.AddScoped<FuerzaGServicial.Services.Handlers.JwtHttpMessageHandler>();
+// Registrar el JwtHttpMessageHandler como Transient (para HttpClient)
+builder.Services.AddTransient<FuerzaGServicial.Services.Handlers.JwtHttpMessageHandler>();
 
+// ServiceApiClient con JWT handler
 builder.Services.AddHttpClient<FuerzaGServicial.Services.Clients.ServiceApiClient>(client =>
 {
     client.BaseAddress = new Uri(serviceApiUrl);
 })
 .AddHttpMessageHandler<FuerzaGServicial.Services.Handlers.JwtHttpMessageHandler>();
 
-//  (sin handler para login, pero con handler para CRUD)
+// UserAccountApiClient con JWT handler
 builder.Services.AddHttpClient<FuerzaGServicial.Services.Clients.UserAccountApiClient>(client =>
 {
     client.BaseAddress = new Uri(userAccountApiUrl);
