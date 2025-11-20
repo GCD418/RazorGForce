@@ -9,7 +9,7 @@ using UserAccountService.Domain.Ports;
 
 namespace FuerzaGServicial.Pages.Technicians;
 
-// [Authorize(Roles = "Manager,CEO")]
+[Authorize(Roles = "Manager,CEO")]
 public class TechnicianPage : PageModel
 {
     private readonly ITechnicianFacade _technicianFacade;
