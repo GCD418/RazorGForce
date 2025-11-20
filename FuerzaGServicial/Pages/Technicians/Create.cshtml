@@ -1,5 +1,5 @@
 ﻿@page
-@model CreateModel
+@model FuerzaGServicial.Pages.Technicians.Create
 @{
     ViewData["Title"] = "Crear Técnico";
 }
@@ -9,56 +9,55 @@
 
     <form method="post" class="card card-body shadow-sm" id="technicianForm" novalidate>
         <div class="row g-3">
+
             <!-- Nombre -->
             <div class="col-md-6">
-                <label asp-for="Form.Name" class="form-label">Nombre *</label>
-                <input asp-for="Form.Name" class="form-control" placeholder="Ingrese nombre"
-                    required minlength="3" maxlength="100"
-                    pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]+$"
-                    title="Solo se permiten letras y espacios." />
+                <label asp-for="Technician.Name" class="form-label">Nombre *</label>
+                <input asp-for="Technician.Name" class="form-control" placeholder="Ingrese nombre"
+                       required minlength="3" maxlength="100"
+                       pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]+$"
+                       title="Solo se permiten letras y espacios." />
                 <div class="invalid-feedback">
                     El nombre debe tener al menos 3 caracteres y solo letras.
                 </div>
-                <span asp-validation-for="Form.Name" class="text-danger small"></span>
+                <span asp-validation-for="Technician.Name" class="text-danger small"></span>
             </div>
 
             <!-- Apellido Paterno -->
             <div class="col-md-6">
-                <label asp-for="Form.FirstLastName" class="form-label">Apellido Paterno *</label>
-                
-                <input asp-for="Form.FirstLastName" class="form-control" placeholder="Ingrese apellido paterno"
-                        required minlength="2" maxlength="100"
-                        pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]+$"
-                        title="Solo se permiten letras y espacios." />
-                
+                <label asp-for="Technician.FirstLastName" class="form-label">Apellido Paterno *</label>
+                <input asp-for="Technician.FirstLastName" class="form-control" placeholder="Ingrese apellido paterno"
+                       required minlength="2" maxlength="100"
+                       pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]+$"
+                       title="Solo se permiten letras y espacios." />
+
                 <div class="invalid-feedback">
                     El apellido paterno debe tener al menos 2 caracteres y solo letras.
                 </div>
-                <span asp-validation-for="Form.FirstLastName" class="text-danger small"></span>
+                <span asp-validation-for="Technician.FirstLastName" class="text-danger small"></span>
             </div>
 
             <!-- Apellido Materno -->
             <div class="col-md-6">
-                <label asp-for="Form.SecondLastName" class="form-label">Apellido Materno</label>
-                
-                <input asp-for="Form.SecondLastName" class="form-control" placeholder="Ingrese apellido materno (opcional)"
-                        minlength="2" maxlength="100"
-                        pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]*$"
-                        title="Solo se permiten letras y espacios si se llena." />
-                
+                <label asp-for="Technician.SecondLastName" class="form-label">Apellido Materno</label>
+                <input asp-for="Technician.SecondLastName" class="form-control" placeholder="Ingrese apellido materno (opcional)"
+                       minlength="2" maxlength="100"
+                       pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]*$"
+                       title="Solo se permiten letras y espacios si se llena." />
+
                 <div class="invalid-feedback">
                     El apellido materno debe tener al menos 2 caracteres y solo letras.
                 </div>
-                
-                <span asp-validation-for="Form.SecondLastName" class="text-danger small"></span>
+
+                <span asp-validation-for="Technician.SecondLastName" class="text-danger small"></span>
             </div>
 
             <!-- Teléfono -->
             <div class="col-md-6">
-                <label asp-for="Form.PhoneNumber" class="form-label">Teléfono *</label>
-                <input asp-for="Form.PhoneNumber" class="form-control" placeholder="Ej: 76543210" value=""
+                <label asp-for="Technician.PhoneNumber" class="form-label">Teléfono *</label>
+                <input asp-for="Technician.PhoneNumber" class="form-control" placeholder="Ej: 76543210"
                        type="tel" pattern="[0-9]{8}" required />
-                <span asp-validation-for="Form.PhoneNumber" class="text-danger small"></span>
+                <span asp-validation-for="Technician.PhoneNumber" class="text-danger small"></span>
                 <div class="invalid-feedback">
                     El teléfono debe tener exactamente 8 dígitos.
                 </div>
@@ -66,10 +65,10 @@
 
             <!-- Email -->
             <div class="col-md-6">
-                <label asp-for="Form.Email" class="form-label">Correo Electrónico *</label>
-                <input asp-for="Form.Email" class="form-control" placeholder="ejemplo@correo.com"
+                <label asp-for="Technician.Email" class="form-label">Correo Electrónico *</label>
+                <input asp-for="Technician.Email" class="form-control" placeholder="ejemplo@correo.com"
                        type="email" required maxlength="255" />
-                <span asp-validation-for="Form.Email" class="text-danger small"></span>
+                <span asp-validation-for="Technician.Email" class="text-danger small"></span>
                 <div class="invalid-feedback">
                     Ingrese un correo electrónico válido.
                 </div>
@@ -78,61 +77,71 @@
             <!-- Documento -->
             <div class="col-md-6">
                 <div class="row g-2 align-items-start">
+
                     <div class="col-md-8">
-                        <label asp-for="Form.DocumentNumber" class="form-label">CI *</label>
-                        <input asp-for="Form.DocumentNumber" class="form-control" placeholder="Ej: 1234567"
-                               type="text" minlength="6" maxlength="10" pattern="[0-9]{6,10}" required />
-                        <span asp-validation-for="Form.DocumentNumber" class="text-danger small"></span>
+                        <label asp-for="Technician.DocumentNumber" class="form-label">CI *</label>
+                        <input asp-for="Technician.DocumentNumber" class="form-control"
+                               placeholder="Ej: 1234567"
+                               type="text" minlength="6" maxlength="10"
+                               pattern="[0-9]{6,10}" required />
+                        <span asp-validation-for="Technician.DocumentNumber" class="text-danger small"></span>
                         <div class="invalid-feedback">
                             El CI debe contener entre 6 y 10 dígitos.
                         </div>
                     </div>
+
                     <div class="col-md-4">
-                        <label asp-for="Form.DocumentExtension" class="form-label">Complemento</label>
-                        <input asp-for="Form.DocumentExtension" id="Form_Complement" class="form-control" placeholder="Ej: 1A"
-                               maxlength="2" minlength="2" pattern="^([1-9][A-Z])?$"
+                        <label asp-for="Technician.DocumentExtension" class="form-label">Complemento</label>
+                        <input asp-for="Technician.DocumentExtension" class="form-control"
+                               placeholder="Ej: 1A"
+                               maxlength="2" minlength="2"
+                               pattern="^([1-9][A-Z])?$"
                                title="Formato: dígito 1-9 seguido de letra mayúscula (ej. 1A)" />
-                        <span asp-validation-for="Form.DocumentExtension" class="text-danger small"></span>
+                        <span asp-validation-for="Technician.DocumentExtension" class="text-danger small"></span>
                         <div class="invalid-feedback">
                             Formato: dígito 1-9 seguido de letra mayúscula.
                         </div>
                     </div>
+
                 </div>
             </div>
 
             <!-- Salario -->
             <div class="col-md-6">
-                <label asp-for="Form.BaseSalary" class="form-label">Salario Base (Bs.-)*</label>
-                
-                <input asp-for="Form.BaseSalary" class="form-control" placeholder="Ej: 2500.00"
-                        required pattern="^\d+(\.\d{1,2})?$"
-                        title="Solo se permiten números y un punto decimal (hasta dos decimales)."
-                        inputmode="decimal" />
-                
+                <label asp-for="Technician.BaseSalary" class="form-label">Salario Base (Bs.-)*</label>
+                <input asp-for="Technician.BaseSalary" class="form-control"
+                       placeholder="Ej: 2500.00"
+                       required pattern="^\d+(\.\d{1,2})?$"
+                       title="Solo se permiten números y un punto decimal (hasta dos decimales)."
+                       inputmode="decimal" />
+
                 <div class="invalid-feedback">
                     Ingrese un salario válido mayor a 0 con hasta 2 decimales.
                 </div>
-                
-                <span asp-validation-for="Form.BaseSalary" class="text-danger small"></span>
+
+                <span asp-validation-for="Technician.BaseSalary" class="text-danger small"></span>
             </div>
 
             <!-- Dirección -->
             <div class="col-12">
-                <label asp-for="Form.Address" class="form-label">Dirección *</label>
-                <textarea asp-for="Form.Address" class="form-control" rows="2" placeholder="Ingrese la dirección completa"
+                <label asp-for="Technician.Address" class="form-label">Dirección *</label>
+                <textarea asp-for="Technician.Address" class="form-control"
+                          rows="2" placeholder="Ingrese la dirección completa"
                           required minlength="5" maxlength="200"></textarea>
-                <span asp-validation-for="Form.Address" class="text-danger small"></span>
+                <span asp-validation-for="Technician.Address" class="text-danger small"></span>
                 <div class="invalid-feedback">
                     La dirección debe tener al menos 5 caracteres y no más de 200.
                 </div>
             </div>
+
         </div>
 
         <div class="mt-4">
             <button type="submit" id="btnSubmit" class="btn btn-dark">
                 <i class="fas fa-save"></i> <span class="btn-text">Guardar</span>
-                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                <span class="spinner-border spinner-border-sm d-none" role="status"></span>
             </button>
+
             <a asp-page="/Technicians/TechnicianPage" class="btn btn-outline-secondary">
                 <i class="fas fa-times"></i> Cancelar
             </a>
@@ -143,6 +152,7 @@
         </div>
     </form>
 </div>
+
 
 @section Scripts {
     <script>

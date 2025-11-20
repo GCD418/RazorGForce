@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using FuerzaGServicial.ModelsD.Technicians;
 using FuerzaGServicial.Services.Facades.Technicians;
-using UserAccountService.Domain.Entities;
-using UserAccountService.Domain.Ports;
+// using UserAccountService.Domain.Entities;
+// using UserAccountService.Domain.Ports;
 
 namespace FuerzaGServicial.Pages.Technicians;
 
@@ -14,7 +14,7 @@ public class Edit : PageModel
 {
     private readonly ITechnicianFacade _technicianFacade;
     private readonly IDataProtector _protector;
-    private readonly ISessionManager _sessionManager;
+    //private readonly ISessionManager _sessionManager;
 
     public List<string> ValidationErrors { get; set; } = new();
 
@@ -23,12 +23,12 @@ public class Edit : PageModel
 
     public Edit(
         ITechnicianFacade technicianFacade,
-        IDataProtectionProvider provider,
-        ISessionManager sessionManager)
+        IDataProtectionProvider provider)
+        //,ISessionManager sessionManager)
     {
         _technicianFacade = technicianFacade;
         _protector = provider.CreateProtector("TechnicianProtector");
-        _sessionManager = sessionManager;
+        //_sessionManager = sessionManager;
     }
 
     public async Task<IActionResult> OnGetAsync(string id)
@@ -72,7 +72,7 @@ public class Edit : PageModel
     {
         ModelState.Clear();
 
-        Technician.UserId = _sessionManager.UserId ?? 9999;
+       // Technician.UserId = _sessionManager.UserId ?? 9999;
 
         var result = await _technicianFacade.Update(Technician.Id, Technician);
 

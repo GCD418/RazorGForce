@@ -3,16 +3,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using FuerzaGServicial.ModelsD.Technicians;
 using FuerzaGServicial.Services.Facades.Technicians;
-using UserAccountService.Domain.Entities;
-using UserAccountService.Domain.Ports;
-using FuerzaGServicial.Models.UserAccount;
+// using UserAccountService.Domain.Entities;
+// using UserAccountService.Domain.Ports;
+// using FuerzaGServicial.Models.UserAccount;
 namespace FuerzaGServicial.Pages.Technicians;
 
 // [Authorize(Roles = UserRoles.Manager)]
 public class Create : PageModel
 {
     private readonly ITechnicianFacade _technicianFacade;
-    private readonly ISessionManager _sessionManager;
+    //private readonly ISessionManager _sessionManager;
 
     public List<string> ValidationErrors { get; set; } = new();
 
@@ -20,11 +20,11 @@ public class Create : PageModel
     public CreateTechnicianModel Technician { get; set; } = new();
 
     public Create(
-        ITechnicianFacade technicianFacade,
-        ISessionManager sessionManager)
+        ITechnicianFacade technicianFacade)
+        //ISessionManager sessionManager)
     {
         _technicianFacade = technicianFacade;
-        _sessionManager = sessionManager;
+        //_sessionManager = sessionManager;
     }
 
     public void OnGet() { }
@@ -33,7 +33,7 @@ public class Create : PageModel
     {
         ModelState.Clear();
 
-        Technician.UserId = _sessionManager.UserId ?? 9999;
+        //Technician.UserId = _sessionManager.UserId ?? 9999;
 
         var result = await _technicianFacade.Create(Technician);
 
