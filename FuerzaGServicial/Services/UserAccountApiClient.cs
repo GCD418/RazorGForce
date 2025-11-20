@@ -44,7 +44,7 @@ public class UserAccountApiClient
     public async Task<bool> UpdateAsync(UserAccount userAccount, int userId)
     {
         var request = new HttpRequestMessage(HttpMethod.Put, "api/useraccounts");
-        request.Headers.Add("id", userId.ToString());
+        request.Headers.Add("userId", userId.ToString());
         request.Content = JsonContent.Create(userAccount);
         
         var response = await _http.SendAsync(request);
