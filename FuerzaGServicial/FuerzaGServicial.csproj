@@ -7,10 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-	  <ProjectReference Include="..\ServiceService\ServiceService.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
       <_ContentIncludedByDefault Remove="Pages\Reports\BrandStatistics.cshtml" />
       <_ContentIncludedByDefault Remove="Pages\Reports\Index.cshtml" />
       <_ContentIncludedByDefault Remove="Pages\Reports\VehicleReport.cshtml" />
