@@ -11,6 +11,21 @@ builder.Services.AddRazorPages();
 builder.Services.AddHttpContextAccessor();
 
 // ----------------------------
+// 1.5️⃣ Configurar autenticación basada en cookies (para Razor Pages)
+// ----------------------------
+builder.Services.AddAuthentication("CookieAuth")
+    .AddCookie("CookieAuth", options =>
+    {
+        options.LoginPath = "/Login";
+        options.LogoutPath = "/Logout";
+        options.AccessDeniedPath = "/AccessDenied";
+        options.ExpireTimeSpan = TimeSpan.FromHours(1);
+        options.SlidingExpiration = true;
+    });
+
+builder.Services.AddAuthorization();
+
+// ----------------------------
 // 2️⃣ Leer URLs de los microservicios desde appsettings.json
 // ----------------------------
 var serviceApiUrl = builder.Configuration["ApiSettings:ServiceMicroserviceUrl"];

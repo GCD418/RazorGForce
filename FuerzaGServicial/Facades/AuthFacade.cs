@@ -1,6 +1,7 @@
 using FuerzaGServicial.Models.Auth;
 using FuerzaGServicial.Models.UserAccounts;
 using FuerzaGServicial.Services.Clients;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -44,13 +45,31 @@ public class AuthFacade
 
         _httpContextAccessor.HttpContext?.Response.Cookies.Append(TokenCookieName, response.Token, cookieOptions);
 
+        var handler = new JwtSecurityTokenHandler();
+        var jwtToken = handler.ReadJwtToken(response.Token);
+        
+        var claims = new List<Claim>();
+        foreach (var claim in jwtToken.Claims)
+        {
+            claims.Add(new Claim(claim.Type, claim.Value));
+        }
+
+        var identity = new ClaimsIdentity(claims, "CookieAuth");
+        var principal = new ClaimsPrincipal(identity);
+
+        await _httpContextAccessor.HttpContext.SignInAsync("CookieAuth", principal, new AuthenticationProperties
+        {
+            IsPersistent = false,
+            ExpiresUtc = DateTimeOffset.UtcNow.AddSeconds(response.ExpiresIn)
+        });
+
         return true;
     }
 
-    public Task LogoutAsync()
+    public async Task LogoutAsync()
     {
         _httpContextAccessor.HttpContext?.Response.Cookies.Delete(TokenCookieName);
-        return Task.CompletedTask;
+        await _httpContextAccessor.HttpContext.SignOutAsync("CookieAuth");
     }
 
     public bool IsAuthenticated
