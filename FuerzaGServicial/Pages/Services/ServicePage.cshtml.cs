@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using FuerzaGServicial.Models.Services;
 using FuerzaGServicial.Services.Facades.Services;
-using FuerzaGServicial.Models.UserAccount;
+
 namespace FuerzaGServicial.Pages.Services;
 
 [Authorize(Roles = "Manager,CEO")] //nos falta

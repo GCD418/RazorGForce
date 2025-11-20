@@ -33,6 +33,7 @@ builder.Services.AddAuthorization();
 var serviceApiUrl = builder.Configuration["ApiSettings:ServiceMicroserviceUrl"];
 var userAccountApiUrl = builder.Configuration["ApiSettings:UserAccountMicroserviceUrl"];
 var technicianApiUrl = builder.Configuration["ApiSettings:TechnicianMicroserviceUrl"];
+var ownerApiUrl = builder.Configuration["ApiSettings:OwnerMicroserviceUrl"];
 
 
 // ----------------------------

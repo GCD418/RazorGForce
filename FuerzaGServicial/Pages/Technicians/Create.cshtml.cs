@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using FuerzaGServicial.ModelsD.Technicians;
 using FuerzaGServicial.Services.Facades.Technicians;
+using FuerzaGServicial.Models.UserAccounts;
 using UserAccountService.Domain.Entities;
 using UserAccountService.Domain.Ports;
-using FuerzaGServicial.Models.UserAccount;
 namespace FuerzaGServicial.Pages.Technicians;
+
+
 
 [Authorize(Roles = UserRoles.Manager)]
 public class Create : PageModel
