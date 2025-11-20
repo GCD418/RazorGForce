@@ -16,4 +16,13 @@
       <_ContentIncludedByDefault Remove="Pages\Reports\VehicleReport.cshtml" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Facades\UserAccounts\" />
+      <Folder Include="Facades\Owners\" />
+      <Folder Include="Facades\Technicians\" />
+      <Folder Include="ModelsD\UserAccounts\" />
+      <Folder Include="ModelsD\Technicians\" />
+      <Folder Include="ModelsD\Owners\" />
+    </ItemGroup>
+
 </Project>

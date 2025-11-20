@@ -1,33 +1,23 @@
-using CommonService.Domain.Services.Validations;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using ServiceService.Domain.Entities;
-using UserAccountService.Domain.Entities;
-using UserAccountService.Domain.Ports;
-
+using FuerzaGServicial.ModelsD.Services;
+using FuerzaGServicial.Services.Facades.Services;
 
 namespace FuerzaGServicial.Pages.Services;
 
-[Authorize(Roles = UserRoles.CEO)]
+[Authorize(Roles = UserRoles.CEO)] //nos faltaba este atributo
 public class Create : PageModel
 {
-    private readonly ServiceService.Application.Services.ServiceService _serviceService;
-    private readonly IValidator<Service> _validator;
-    private readonly ISessionManager _sessionManager;
+    private readonly IServiceFacade _serviceFacade;
 
-    public List<string> ValidationErrors { get; set; } = [];
+    public List<string> ValidationErrors { get; set; } = new();
 
-    [BindProperty] public Service Service { get; set; } = new();
+    [BindProperty] public CreateServiceModel Service { get; set; } = new();
 
-    public Create(
-        ServiceService.Application.Services.ServiceService serviceService,
-        IValidator<Service> validator,
-        ISessionManager sessionManager)
+    public Create(IServiceFacade serviceFacade)
     {
-        _serviceService = serviceService;
-        _validator = validator;
-        _sessionManager = sessionManager;
+        _serviceFacade = serviceFacade;
     }
 
     public void OnGet() { }
@@ -36,25 +26,19 @@ public class Create : PageModel
     {
         ModelState.Clear();
 
-        var validation = _validator.Validate(Service);
-        if (validation.IsFailure)
+        if (!ModelState.IsValid)
         {
-            ValidationErrors = validation.Errors;
-
-            foreach (var error in validation.Errors)
-            {
-                var field = MapErrorToField(error);
-                if (!string.IsNullOrEmpty(field))
-                    ModelState.AddModelError($"Service.{field}", error);
-                else
-                    ModelState.AddModelError(string.Empty, error);
-            }
+            ValidationErrors = ModelState.Values
+                .SelectMany(v => v.Errors)
+                .Select(e => e.ErrorMessage)
+                .ToList();
 
             return Page();
         }
 
-        var ok = await _serviceService.Create(Service, _sessionManager.UserId ?? 9999);
-        if (!ok)
+        var result = await _serviceFacade.Create(Service);
+
+        if (result == null)
         {
             ModelState.AddModelError(string.Empty, "No se pudo crear el registro.");
             return Page();
