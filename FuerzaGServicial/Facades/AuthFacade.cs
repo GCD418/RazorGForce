@@ -1,13 +1,12 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using FuerzaGServicial.Models.Auth;
 using FuerzaGServicial.Models.Common;
 using FuerzaGServicial.Models.UserAccounts;
-using FuerzaGServicial.Services.Clients;
+using FuerzaGServicial.Services;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
-namespace FuerzaGServicial.Facades.Auth;
+namespace FuerzaGServicial.Facades;
 
 public class AuthFacade
 {

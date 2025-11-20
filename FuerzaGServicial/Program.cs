@@ -1,4 +1,6 @@
-﻿using FuerzaGServicial.Facades.Services;
+﻿using FuerzaGServicial.Facades;
+using FuerzaGServicial.Facades.Services;
+using FuerzaGServicial.Services;
 using FuerzaGServicial.Services.Facades.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -38,21 +40,21 @@ var technicianApiUrl = builder.Configuration["ApiSettings:TechnicianMicroservice
 // ----------------------------
 
 // Registrar el JwtHttpMessageHandler como Transient (para HttpClient)
-builder.Services.AddTransient<FuerzaGServicial.Services.Handlers.JwtHttpMessageHandler>();
+builder.Services.AddTransient<JwtHttpMessageHandler>();
 
 // ServiceApiClient con JWT handler
-builder.Services.AddHttpClient<FuerzaGServicial.Services.Clients.ServiceApiClient>(client =>
+builder.Services.AddHttpClient<ServiceApiClient>(client =>
 {
     client.BaseAddress = new Uri(serviceApiUrl);
 })
-.AddHttpMessageHandler<FuerzaGServicial.Services.Handlers.JwtHttpMessageHandler>();
+.AddHttpMessageHandler<JwtHttpMessageHandler>();
 
 // UserAccountApiClient con JWT handler
-builder.Services.AddHttpClient<FuerzaGServicial.Services.Clients.UserAccountApiClient>(client =>
+builder.Services.AddHttpClient<UserAccountApiClient>(client =>
 {
     client.BaseAddress = new Uri(userAccountApiUrl);
 })
-.AddHttpMessageHandler<FuerzaGServicial.Services.Handlers.JwtHttpMessageHandler>();
+.AddHttpMessageHandler<JwtHttpMessageHandler>();
 
 // ----------------------------
 // 4️⃣ Registrar fachadas y servicio
@@ -60,9 +62,9 @@ builder.Services.AddHttpClient<FuerzaGServicial.Services.Clients.UserAccountApiC
 builder.Services.AddScoped<IServiceFacade,
                            ServiceFacade>();
 
-builder.Services.AddScoped<FuerzaGServicial.Facades.Auth.AuthFacade>();
-builder.Services.AddScoped<FuerzaGServicial.Facades.UserAccounts.UserAccountFacade>();
-builder.Services.AddScoped<FuerzaGServicial.Services.Session.JwtSessionManager>();
+builder.Services.AddScoped<AuthFacade>();
+builder.Services.AddScoped<UserAccountFacade>();
+builder.Services.AddScoped<JwtSessionManager>();
 
 builder.Services.AddDataProtection();
 

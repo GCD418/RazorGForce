@@ -1,8 +1,8 @@
 using FuerzaGServicial.Models.Common;
 using FuerzaGServicial.Models.UserAccounts;
-using FuerzaGServicial.Services.Clients;
+using FuerzaGServicial.Services;
 
-namespace FuerzaGServicial.Facades.UserAccounts;
+namespace FuerzaGServicial.Facades;
 
 public class UserAccountFacade
 {

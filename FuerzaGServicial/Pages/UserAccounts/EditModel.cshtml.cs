@@ -1,10 +1,10 @@
+using FuerzaGServicial.Facades;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using FuerzaGServicial.Models.UserAccounts;
-using FuerzaGServicial.Facades.UserAccounts;
-using FuerzaGServicial.Services.Session;
+using FuerzaGServicial.Services;
 
 namespace FuerzaGServicial.Pages.UserAccounts;
 

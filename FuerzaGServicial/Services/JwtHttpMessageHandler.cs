@@ -1,6 +1,4 @@
-using Microsoft.AspNetCore.Http;
-
-namespace FuerzaGServicial.Services.Handlers;
+namespace FuerzaGServicial.Services;
 
 public class JwtHttpMessageHandler : DelegatingHandler
 {

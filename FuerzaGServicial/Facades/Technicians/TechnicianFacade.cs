@@ -1,5 +1,4 @@
 using FuerzaGServicial.ModelsD.Technicians;
-using FuerzaGServicial.Services.Clients;
 
 namespace FuerzaGServicial.Services.Facades.Technicians
 {

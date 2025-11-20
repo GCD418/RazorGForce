@@ -1,7 +1,6 @@
 ﻿using FuerzaGServicial.Models.Services;
-using System.Net.Http.Json;
 
-namespace FuerzaGServicial.Services.Clients
+namespace FuerzaGServicial.Services
 {
     public class ServiceApiClient
     {

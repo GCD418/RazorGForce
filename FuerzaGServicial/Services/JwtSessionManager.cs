@@ -1,6 +1,6 @@
-using FuerzaGServicial.Facades.Auth;
+using FuerzaGServicial.Facades;
 
-namespace FuerzaGServicial.Services.Session;
+namespace FuerzaGServicial.Services;
 
 public class JwtSessionManager
 {

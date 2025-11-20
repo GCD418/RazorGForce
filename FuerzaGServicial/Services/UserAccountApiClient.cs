@@ -1,9 +1,8 @@
 using FuerzaGServicial.Models.Auth;
 using FuerzaGServicial.Models.Common;
 using FuerzaGServicial.Models.UserAccounts;
-using System.Net.Http.Json;
 
-namespace FuerzaGServicial.Services.Clients;
+namespace FuerzaGServicial.Services;
 
 public class UserAccountApiClient
 {
