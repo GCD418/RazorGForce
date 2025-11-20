@@ -16,15 +16,21 @@ var userAccountApiUrl = builder.Configuration["ApiSettings:UserAccountMicroservi
 // ----------------------------
 // 3️⃣ Registrar HttpClients para los microservicios
 // ----------------------------
+
+builder.Services.AddScoped<FuerzaGServicial.Services.Handlers.JwtHttpMessageHandler>();
+
 builder.Services.AddHttpClient<FuerzaGServicial.Services.Clients.ServiceApiClient>(client =>
 {
     client.BaseAddress = new Uri(serviceApiUrl);
-});
+})
+.AddHttpMessageHandler<FuerzaGServicial.Services.Handlers.JwtHttpMessageHandler>();
 
+//  (sin handler para login, pero con handler para CRUD)
 builder.Services.AddHttpClient<FuerzaGServicial.Services.Clients.UserAccountApiClient>(client =>
 {
     client.BaseAddress = new Uri(userAccountApiUrl);
-});
+})
+.AddHttpMessageHandler<FuerzaGServicial.Services.Handlers.JwtHttpMessageHandler>();
 
 // ----------------------------
 // 4️⃣ Registrar fachadas y servicios
@@ -33,7 +39,10 @@ builder.Services.AddScoped<FuerzaGServicial.Services.Facades.Services.IServiceFa
                            FuerzaGServicial.Services.Facades.Services.ServiceFacade>();
 
 builder.Services.AddScoped<FuerzaGServicial.Facades.Auth.AuthFacade>();
+builder.Services.AddScoped<FuerzaGServicial.Facades.UserAccounts.UserAccountFacade>();
 builder.Services.AddScoped<FuerzaGServicial.Services.Session.JwtSessionManager>();
+
+builder.Services.AddDataProtection();
 
 // ----------------------------
 // 5️⃣ Construir app

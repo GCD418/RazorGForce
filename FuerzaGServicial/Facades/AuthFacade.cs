@@ -1,4 +1,5 @@
 using FuerzaGServicial.Models.Auth;
+using FuerzaGServicial.Models.UserAccounts;
 using FuerzaGServicial.Services.Clients;
 using Microsoft.AspNetCore.Http;
 using System.IdentityModel.Tokens.Jwt;
@@ -123,5 +124,10 @@ public class AuthFacade
         {
             return string.Empty;
         }
+    }
+
+    public async Task<bool> CreateUserAccountAsync(UserAccount userAccount)
+    {
+        return await _apiClient.CreateAsync(userAccount);
     }
 }
