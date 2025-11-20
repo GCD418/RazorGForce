@@ -1,4 +1,4 @@
-﻿using FuerzaGServicial.ModelsD.Services;
+﻿using FuerzaGServicial.Models.Services;
 namespace FuerzaGServicial.Services.Facades.Services
 {
     public interface IServiceFacade

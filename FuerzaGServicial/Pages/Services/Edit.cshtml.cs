@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.DataProtection;
-using FuerzaGServicial.ModelsD.Services;
+using FuerzaGServicial.Models.Services;
 using FuerzaGServicial.Services.Facades.Services;
 
 namespace FuerzaGServicial.Pages.Services;

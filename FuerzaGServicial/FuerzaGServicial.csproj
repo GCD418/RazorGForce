@@ -20,9 +20,9 @@
       <Folder Include="Facades\UserAccounts\" />
       <Folder Include="Facades\Owners\" />
       <Folder Include="Facades\Technicians\" />
-      <Folder Include="ModelsD\UserAccounts\" />
-      <Folder Include="ModelsD\Technicians\" />
-      <Folder Include="ModelsD\Owners\" />
+      <Folder Include="Models\UserAccounts\" />
+      <Folder Include="Models\Technicians\" />
+      <Folder Include="Models\Owners\" />
     </ItemGroup>
 
 </Project>

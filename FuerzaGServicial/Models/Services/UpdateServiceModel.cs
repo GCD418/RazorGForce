@@ -1,4 +1,4 @@
-﻿namespace FuerzaGServicial.ModelsD.Services
+﻿namespace FuerzaGServicial.Models.Services
 {
     public class UpdateServiceModel : CreateServiceModel
     {
