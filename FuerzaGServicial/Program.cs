@@ -53,7 +53,7 @@ builder.Services.AddHttpClient<FuerzaGServicial.Services.Clients.UserAccountApiC
 .AddHttpMessageHandler<FuerzaGServicial.Services.Handlers.JwtHttpMessageHandler>();
 
 // ----------------------------
-// 4️⃣ Registrar fachadas y servicios
+// 4️⃣ Registrar fachadas y servicio
 // ----------------------------
 builder.Services.AddScoped<IServiceFacade,
                            ServiceFacade>();
