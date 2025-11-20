@@ -1,23 +1,23 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using UserAccountService.Application.Facades;
+using FuerzaGServicial.Facades.Auth;
 
 namespace FuerzaGServicial.Pages;
 
 public class Login : PageModel
 {
-    private readonly SessionFacade  _sessionFacade;
+    private readonly AuthFacade _authFacade;
     [BindProperty] public InputModel Input { get; set; } = new();
 
-    public Login(SessionFacade sessionFacade)
+    public Login(AuthFacade authFacade)
     {
-        _sessionFacade = sessionFacade;
+        _authFacade = authFacade;
     }
 
     public IActionResult OnGet()
     {
-        if (_sessionFacade.IsAuthenticated)
+        if (_authFacade.IsAuthenticated)
         {
             return RedirectToPage("/Index");
         }
@@ -32,8 +32,8 @@ public class Login : PageModel
             return Page();
         }
 
-        bool isSuccess = await _sessionFacade.Login(Input.Username, Input.Password);
-        // Si la validación pasó, redirige a Index
+        bool isSuccess = await _authFacade.LoginAsync(Input.Username, Input.Password);
+        
         if (!isSuccess)
         {
             var ErrorMessage = "Usuario o contraseña incorrectos.";
@@ -60,7 +60,7 @@ public class Login : PageModel
 
     public async Task<IActionResult> OnPostLogoutAsync()
     {
-        await _sessionFacade.Logout();
+        await _authFacade.LogoutAsync();
         return RedirectToPage("/Login");
     }
 }

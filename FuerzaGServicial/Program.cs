@@ -5,24 +5,35 @@
 // ----------------------------
 builder.Services.AddRazorPages();
 
-// ----------------------------
-// 2️⃣ Leer URL del microservicio desde appsettings.json
-// ----------------------------
-var serviceApiUrl = builder.Configuration["ApiSettings:ServiceMicroserviceUrl"];
+builder.Services.AddHttpContextAccessor();
 
 // ----------------------------
-// 3️⃣ Registrar HttpClient para el microservicio
+// 2️⃣ Leer URLs de los microservicios desde appsettings.json
+// ----------------------------
+var serviceApiUrl = builder.Configuration["ApiSettings:ServiceMicroserviceUrl"];
+var userAccountApiUrl = builder.Configuration["ApiSettings:UserAccountMicroserviceUrl"];
+
+// ----------------------------
+// 3️⃣ Registrar HttpClients para los microservicios
 // ----------------------------
 builder.Services.AddHttpClient<FuerzaGServicial.Services.Clients.ServiceApiClient>(client =>
 {
     client.BaseAddress = new Uri(serviceApiUrl);
 });
 
+builder.Services.AddHttpClient<FuerzaGServicial.Services.Clients.UserAccountApiClient>(client =>
+{
+    client.BaseAddress = new Uri(userAccountApiUrl);
+});
+
 // ----------------------------
-// 4️⃣ Registrar la fachada
+// 4️⃣ Registrar fachadas y servicios
 // ----------------------------
 builder.Services.AddScoped<FuerzaGServicial.Services.Facades.Services.IServiceFacade,
                            FuerzaGServicial.Services.Facades.Services.ServiceFacade>();
+
+builder.Services.AddScoped<FuerzaGServicial.Facades.Auth.AuthFacade>();
+builder.Services.AddScoped<FuerzaGServicial.Services.Session.JwtSessionManager>();
 
 // ----------------------------
 // 5️⃣ Construir app
