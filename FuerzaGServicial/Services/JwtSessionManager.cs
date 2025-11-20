@@ -1,8 +1,8 @@
 using FuerzaGServicial.Facades;
-
+using FuerzaGServicial.Services.Session;
 namespace FuerzaGServicial.Services;
 
-public class JwtSessionManager
+public class JwtSessionManager : ISessionManager
 {
     private readonly AuthFacade _authFacade;
 
@@ -18,4 +18,8 @@ public class JwtSessionManager
     public string FullName => _authFacade.GetFullName();
 
     public string? Token => _authFacade.GetToken();
+
+    public string? Role => _authFacade.GetRole();
 }
+
+

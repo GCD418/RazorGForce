@@ -5,8 +5,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using FuerzaGServicial.ModelsD.Technicians;
 using FuerzaGServicial.Services.Facades.Technicians;
 using FuerzaGServicial.Models.UserAccounts;
-using UserAccountService.Domain.Entities;
-using UserAccountService.Domain.Ports;
+using FuerzaGServicial.Services.Session;
 
 namespace FuerzaGServicial.Pages.Technicians;
 
@@ -24,7 +23,7 @@ public class Edit : PageModel
 
     public Edit(
         ITechnicianFacade technicianFacade,
-        IDataProtectionProvider provider,
+        IDataProtectionProvider provider
         ,ISessionManager sessionManager)
     {
         _technicianFacade = technicianFacade;

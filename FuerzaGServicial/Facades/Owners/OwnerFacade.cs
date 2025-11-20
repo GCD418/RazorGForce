@@ -1,20 +1,30 @@
 using FuerzaGServicial.ModelsD.Owners;
-using FuerzaGServicial.Services;
+using FuerzaGServicial.Services.Clients;
 
-namespace FuerzaGServicial.Services.Facades.Owners;
-
-public class OwnerFacade : IOwnerFacade
+namespace FuerzaGServicial.Services.Facades.Owners
 {
-    private readonly OwnerApiClient _client;
-
-    public OwnerFacade(OwnerApiClient client)
+    public class OwnerFacade : IOwnerFacade
     {
-        _client = client;
-    }
+        private readonly OwnerApiClient _api;
 
-    public Task<List<OwnerModel>> GetAll() => _client.GetAll();
-    public Task<OwnerModel?> GetById(int id) => _client.GetById(id);
-    public Task<SuccessResponseModel?> Create(CreateOwnerModel request) => _client.Create(request);
-    public Task<SuccessResponseModel?> Update(int id, UpdateOwnerModel request) => _client.Update(id, request);
-    public Task<bool> Delete(int id) => _client.Delete(id);
+        public OwnerFacade(OwnerApiClient api)
+        {
+            _api = api;
+        }
+
+        public Task<List<OwnerModelResponse>> GetAll()
+            => _api.GetAll();
+
+        public Task<OwnerModelResponse?> GetById(int id)
+            => _api.GetById(id);
+
+        public Task<SuccessResponseModel?> Create(CreateOwnerModel request)
+            => _api.Create(request);
+
+        public Task<SuccessResponseModel?> Update(int id, UpdateOwnerModel request)
+            => _api.Update(id, request);
+
+        public Task<bool> Delete(int id, int userId)
+            => _api.Delete(id, userId);
+    }
 }

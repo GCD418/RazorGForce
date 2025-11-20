@@ -2,7 +2,7 @@
 using FuerzaGServicial.Facades.Services;
 using FuerzaGServicial.Services;
 using FuerzaGServicial.Services.Facades.Services;
-
+using FuerzaGServicial.Services.Session;
 var builder = WebApplication.CreateBuilder(args);
 
 // ----------------------------
@@ -39,6 +39,9 @@ var ownerApiUrl = builder.Configuration["ApiSettings:OwnerMicroserviceUrl"];
 // ----------------------------
 // 3️⃣ Registrar HttpClients para los microservicios
 // ----------------------------
+
+builder.Services.AddScoped<ISessionManager, JwtSessionManager>();
+
 
 // Registrar el JwtHttpMessageHandler como Transient (para HttpClient)
 builder.Services.AddTransient<JwtHttpMessageHandler>();

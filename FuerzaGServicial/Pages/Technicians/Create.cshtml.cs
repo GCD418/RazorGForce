@@ -4,8 +4,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using FuerzaGServicial.ModelsD.Technicians;
 using FuerzaGServicial.Services.Facades.Technicians;
 using FuerzaGServicial.Models.UserAccounts;
-using UserAccountService.Domain.Entities;
-using UserAccountService.Domain.Ports;
+using FuerzaGServicial.Services.Session;
 namespace FuerzaGServicial.Pages.Technicians;
 
 

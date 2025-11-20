@@ -49,9 +49,16 @@ public class AuthFacade
         var jwtToken = handler.ReadJwtToken(response.Token);
         
         var claims = new List<Claim>();
+
         foreach (var claim in jwtToken.Claims)
         {
             claims.Add(new Claim(claim.Type, claim.Value));
+        }
+
+        var role = jwtToken.Claims.FirstOrDefault(c => c.Type == "role" || c.Type == "Role")?.Value;
+        if (!string.IsNullOrEmpty(role))
+        {
+            claims.Add(new Claim(ClaimTypes.Role, role)); // <- ESTA LÍNEA ES CLAVE
         }
 
         var identity = new ClaimsIdentity(claims, "CookieAuth");
@@ -144,9 +151,33 @@ public class AuthFacade
             return string.Empty;
         }
     }
+    public string? GetRole()
+    {
+        var token = GetToken();
+        if (string.IsNullOrEmpty(token))
+            return null;
+
+        try
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var jwtToken = handler.ReadJwtToken(token);
+
+            // Soporta ambos formatos de roles
+            return jwtToken.Claims.FirstOrDefault(c =>
+                    c.Type == ClaimTypes.Role ||
+                    c.Type == "role" ||
+                    c.Type == "Role")?.Value;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
 
     public async Task<ApiResponse<int>> CreateUserAccountAsync(UserAccount userAccount)
     {
         return await _apiClient.CreateAsync(userAccount);
     }
+    
 }

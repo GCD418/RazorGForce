@@ -1,11 +1,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using UserAccountService.Domain.Entities;
-using UserAccountService.Domain.Ports;
+// using UserAccountService.Domain.Entities;
+// using UserAccountService.Domain.Ports;
 using FuerzaGServicial.ModelsD.Owners;
 using FuerzaGServicial.Services.Facades.Owners;
 using FuerzaGServicial.Models.UserAccounts;
+using FuerzaGServicial.Services.Session;
 
 namespace FuerzaGServicial.Pages.Owners;
 
