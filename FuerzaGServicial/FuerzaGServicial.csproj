@@ -20,8 +20,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Facades\Owners\" />
-      <Folder Include="Facades\Technicians\" />
       <Folder Include="Models\UserAccounts\" />
       <Folder Include="Models\Technicians\" />
       <Folder Include="Models\Owners\" />

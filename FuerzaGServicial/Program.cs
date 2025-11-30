@@ -1,20 +1,13 @@
 ﻿using FuerzaGServicial.Facades;
-using FuerzaGServicial.Facades.Services;
 using FuerzaGServicial.Services;
-using FuerzaGServicial.Services.Facades.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ----------------------------
-// 1️⃣ Agregar Razor Pages
-// ----------------------------
+// Agregar Razor Pages
 builder.Services.AddRazorPages();
-
 builder.Services.AddHttpContextAccessor();
 
-// ----------------------------
-// 1.5️⃣ Configurar autenticación basada en cookies (para Razor Pages)
-// ----------------------------
+// Configurar autenticación basada en cookies (para Razor Pages)
 builder.Services.AddAuthentication("CookieAuth")
     .AddCookie("CookieAuth", options =>
     {
@@ -27,73 +20,68 @@ builder.Services.AddAuthentication("CookieAuth")
 
 builder.Services.AddAuthorization();
 
-// ----------------------------
-// 2️⃣ Leer URLs de los microservicios desde appsettings.json
-// ----------------------------
+// Leer URLs de los microservicios desde appsettings.json
 var serviceApiUrl = builder.Configuration["ApiSettings:ServiceMicroserviceUrl"];
 var userAccountApiUrl = builder.Configuration["ApiSettings:UserAccountMicroserviceUrl"];
 var technicianApiUrl = builder.Configuration["ApiSettings:TechnicianMicroserviceUrl"];
 var ownerApiUrl = builder.Configuration["ApiSettings:OwnerMicroserviceUrl"];
 
-
-// ----------------------------
-// 3️⃣ Registrar HttpClients para los microservicios
-// ----------------------------
-
-// Registrar el JwtHttpMessageHandler como Transient (para HttpClient)
+// Registrar HttpClients para los microservicios
 builder.Services.AddTransient<JwtHttpMessageHandler>();
 
-// ServiceApiClient con JWT handler
+// ServiceApiClient
 builder.Services.AddHttpClient<ServiceApiClient>(client =>
 {
     client.BaseAddress = new Uri(serviceApiUrl);
 })
 .AddHttpMessageHandler<JwtHttpMessageHandler>();
 
-// UserAccountApiClient con JWT handler
+// UserAccountApiClient
 builder.Services.AddHttpClient<UserAccountApiClient>(client =>
 {
     client.BaseAddress = new Uri(userAccountApiUrl);
 })
 .AddHttpMessageHandler<JwtHttpMessageHandler>();
 
-// ----------------------------
-// 4️⃣ Registrar fachadas y servicio
-// ----------------------------
-builder.Services.AddScoped<IServiceFacade,
-                           ServiceFacade>();
+// TechnicianApiClient
+builder.Services.AddHttpClient<TechnicianApiClient>(client =>
+{
+    client.BaseAddress = new Uri(technicianApiUrl);
+})
+.AddHttpMessageHandler<JwtHttpMessageHandler>();
 
-builder.Services.AddScoped<AuthFacade>();
+// OwnerApiClient
+builder.Services.AddHttpClient<OwnerApiClient>(client =>
+{
+    client.BaseAddress = new Uri(ownerApiUrl);
+})
+.AddHttpMessageHandler<JwtHttpMessageHandler>();
+
+// Registrar fachadas
+builder.Services.AddScoped<ServiceFacade>();
 builder.Services.AddScoped<UserAccountFacade>();
+builder.Services.AddScoped<TechnicianFacade>();
+builder.Services.AddScoped<OwnerFacade>();
+builder.Services.AddScoped<AuthFacade>();
 builder.Services.AddScoped<JwtSessionManager>();
 
 builder.Services.AddDataProtection();
 
-// ----------------------------
-// 5️⃣ Construir app
-// ----------------------------
+// Construir app
 var app = builder.Build();
 
-// ----------------------------
-// 6️⃣ Configurar pipeline
-// ----------------------------
+// Configurar pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
 }
 
 app.UseRouting();
-
-// Para autenticación/authorization
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Mapeo de assets y Razor Pages
 app.MapStaticAssets();
-app.MapRazorPages()
-    .WithStaticAssets();
+app.MapRazorPages().WithStaticAssets();
 
-// ----------------------------
-// 7️⃣ Ejecutar app
-// ----------------------------
+// Ejecutar app
 app.Run();

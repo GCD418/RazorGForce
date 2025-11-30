@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using FuerzaGServicial.Services.Facades.Owners;
 using FuerzaGServicial.Models.Owners;
+using FuerzaGServicial.Facades;
 
 namespace FuerzaGServicial.Pages.Owners;
 

@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using FuerzaGServicial.Models.Owners;
-using FuerzaGServicial.Services.Facades.Owners;
 using FuerzaGServicial.Models.UserAccounts;
+using FuerzaGServicial.Facades;
 
 namespace FuerzaGServicial.Pages.Owners;
 
