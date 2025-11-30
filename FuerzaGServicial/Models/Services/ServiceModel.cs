@@ -22,7 +22,6 @@
 
         public int? CreatedByUserId { get; set; }
 
-        // Propiedades auxiliares opcionales para el front
         public string DisplayPrice => Price.HasValue ? $"{Price:C}" : "No definido";
         public string Status => IsActive ? "Activo" : "Inactivo";
     }
