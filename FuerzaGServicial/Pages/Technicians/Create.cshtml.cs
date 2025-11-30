@@ -4,42 +4,72 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using FuerzaGServicial.Models.Technicians;
 using FuerzaGServicial.Services.Facades.Technicians;
 using FuerzaGServicial.Models.UserAccounts;
+using FuerzaGServicial.Facades;
+
 namespace FuerzaGServicial.Pages.Technicians;
-
-
 
 [Authorize(Roles = UserRoles.Manager)]
 public class Create : PageModel
 {
-    private readonly ITechnicianFacade _technicianFacade;
-    private readonly ISessionManager _sessionManager;
+    private readonly TechnicianFacade _technicianFacade;
+    private readonly AuthFacade _authFacade;
 
     public List<string> ValidationErrors { get; set; } = new();
+
+    // ⬅ NECESARIO, igual que en UserAccount/Create
+    [BindProperty]
+    public CreateUserAccountModel UserAccount { get; set; } = new();
 
     [BindProperty]
     public CreateTechnicianModel Technician { get; set; } = new();
 
     public Create(
-        ITechnicianFacade technicianFacade,
-        ISessionManager sessionManager)
+        TechnicianFacade technicianFacade,
+        AuthFacade authFacade)
     {
         _technicianFacade = technicianFacade;
-        _sessionManager = sessionManager;
+        _authFacade = authFacade;
     }
 
-    public void OnGet() { }
+    public async Task<IActionResult> OnGet()
+    {
+        var userInfo = await _authFacade.GetCurrentUserAsync();
+
+        if (userInfo == null)
+        {
+            return RedirectToPage("/Account/Login");
+        }
+
+        Technician.UserId = userInfo.Id;
+        return Page();
+    }
 
     public async Task<IActionResult> OnPostAsync()
     {
-        ModelState.Clear();
+        ValidationErrors.Clear();
 
-        Technician.UserId = _sessionManager.UserId ?? 9999;
-
-        var result = await _technicianFacade.Create(Technician);
-
-        if (result == null)
+        if (!ModelState.IsValid)
         {
-            ModelState.AddModelError(string.Empty, "No se pudo crear el técnico.");
+            return Page();
+        }
+
+        var userResponse = await _authFacade.CreateUserAccountAsync(UserAccount);
+
+        if (!userResponse.Success)
+        {
+            ValidationErrors = userResponse.Errors;
+            ModelState.AddModelError(string.Empty, userResponse.Message);
+            return Page();
+        }
+
+        Technician.UserId = userResponse.CreatedId;
+
+        var techResponse = await _technicianFacade.CreateTechnicianAsync(Technician);
+
+        if (!techResponse.Success)
+        {
+            ValidationErrors = techResponse.Errors;
+            ModelState.AddModelError(string.Empty, techResponse.Message);
             return Page();
         }
 

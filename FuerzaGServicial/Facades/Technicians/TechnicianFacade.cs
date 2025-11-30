@@ -1,20 +1,40 @@
-﻿using FuerzaGServicial.Models.Technicians;
+﻿using FuerzaGServicial.Models.Common;
+using FuerzaGServicial.Models.Technicians;
+using FuerzaGServicial.Services;
 
-namespace FuerzaGServicial.Services.Facades.Technicians
+namespace FuerzaGServicial.Facades;
+
+public class TechnicianFacade
 {
-    public class TechnicianFacade
+    private readonly TechnicianApiClient _apiClient;
+
+    public TechnicianFacade(TechnicianApiClient apiClient)
     {
-        private readonly TechnicianApiClient _client;
+        _apiClient = apiClient;
+    }
 
-        public TechnicianFacade(TechnicianApiClient client)
-        {
-            _client = client;
-        }
+    public async Task<IEnumerable<TechnicianModel>> GetAllAsync()
+    {
+        return await _apiClient.GetAllAsync();
+    }
 
-        public Task<List<TechnicianModel>> GetAll() => _client.GetAllAsync();
-        public Task<TechnicianModel?> GetById(int id) => _client.GetByIdAsync(id);
-        public Task<SuccessResponseModel?> Create(CreateTechnicianModel request) => _client.InsertAsync(request);
-        public Task<SuccessResponseModel?> Update(int id, UpdateTechnicianModel request) => _client.UpdateAsync(id, request);
-        public Task<bool> Delete(int id, int userId) => _client.DeleteAsync(id, userId);
+    public async Task<TechnicianModel?> GetByIdAsync(int id)
+    {
+        return await _apiClient.GetByIdAsync(id);
+    }
+
+    public async Task<ApiResponse<int>> CreateAsync(CreateTechnicianModel request)
+    {
+        return await _apiClient.CreateAsync(request);
+    }
+
+    public async Task<ApiResponse<bool>> UpdateAsync(int userId, UpdateTechnicianModel request)
+    {
+        return await _apiClient.UpdateAsync(request, userId);
+    }
+
+    public async Task<bool> DeleteByIdAsync(int id, int userId)
+    {
+        return await _apiClient.DeleteByIdAsync(id, userId);
     }
 }

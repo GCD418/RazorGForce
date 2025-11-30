@@ -12,6 +12,12 @@
         public string? DocumentExtension { get; set; }
         public string Address { get; set; } = string.Empty;
         public decimal BaseSalary { get; set; }
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } = true;
+        public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+        public int? ModifiedByUserId { get; set; }
+
+        public string FullName => $"{FirstLastName} {(SecondLastName ?? string.Empty)} {Name}";
+        public string FullDocumentNumber => string.IsNullOrWhiteSpace(DocumentExtension) ? DocumentNumber : $"{DocumentNumber}-{DocumentExtension}";
     }
 }
