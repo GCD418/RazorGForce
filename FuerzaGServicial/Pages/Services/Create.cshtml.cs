@@ -1,60 +1,50 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FuerzaGServicial.Facades;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using FuerzaGServicial.Models.Services;
 using FuerzaGServicial.Models.UserAccounts;
-using FuerzaGServicial.Facades;
 
 namespace FuerzaGServicial.Pages.Services;
 
-[Authorize(Roles = UserRoles.CEO)] //nos faltaba este atributo
+[Authorize(Roles = UserRoles.CEO)]
 public class Create : PageModel
 {
     private readonly ServiceFacade _serviceFacade;
 
     public List<string> ValidationErrors { get; set; } = new();
 
-    [BindProperty] public CreateServiceModel Service { get; set; } = new();
+    [BindProperty]
+    public ServiceModel Service { get; set; } = new();
 
     public Create(ServiceFacade serviceFacade)
     {
         _serviceFacade = serviceFacade;
     }
 
-    public void OnGet() { }
+    public void OnGet()
+    {
+       
+    }
 
     public async Task<IActionResult> OnPostAsync()
     {
-        ModelState.Clear();
+        ValidationErrors.Clear();
 
         if (!ModelState.IsValid)
         {
-            ValidationErrors = ModelState.Values
-                .SelectMany(v => v.Errors)
-                .Select(e => e.ErrorMessage)
-                .ToList();
-
             return Page();
         }
 
-        var result = await _serviceFacade.Create(Service);
+        var response = await _serviceFacade.CreateAsync(Service);
 
-        if (result == null)
+        if (!response.Success)
         {
-            ModelState.AddModelError(string.Empty, "No se pudo crear el registro.");
+            ValidationErrors = response.Errors;
+            ModelState.AddModelError(string.Empty, response.Message);
             return Page();
         }
 
         return RedirectToPage("/Services/ServicePage");
-    }
-
-    private string MapErrorToField(string error)
-    {
-        var e = error.ToLowerInvariant();
-        if (e.Contains("nombre")) return "Name";
-        if (e.Contains("tipo")) return "Type";
-        if (e.Contains("precio")) return "Price";
-        if (e.Contains("descripción") || e.Contains("descripcion")) return "Description";
-        return string.Empty;
     }
 }

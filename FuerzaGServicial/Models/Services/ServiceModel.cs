@@ -21,8 +21,5 @@
         public int? ModifiedByUserId { get; set; }
 
         public int? CreatedByUserId { get; set; }
-
-        public string DisplayPrice => Price.HasValue ? $"{Price:C}" : "No definido";
-        public string Status => IsActive ? "Activo" : "Inactivo";
     }
 }

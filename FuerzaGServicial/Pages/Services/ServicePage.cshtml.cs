@@ -1,24 +1,25 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FuerzaGServicial.Facades;
+using FuerzaGServicial.Models.Services;
+using FuerzaGServicial.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using FuerzaGServicial.Models.Services;
-using FuerzaGServicial.Facades;
 
 namespace FuerzaGServicial.Pages.Services;
 
-[Authorize(Roles = "Manager,CEO")] //nos falta
+[Authorize(Roles = "Manager,CEO")]
 public class ServicePage : PageModel
 {
-    public IEnumerable<ServiceModel> Services { get; set; } = Enumerable.Empty<ServiceModel>();
-
+    public IEnumerable<ServiceModel> Services { get; set; } = new List<ServiceModel>();
     private readonly ServiceFacade _serviceFacade;
     private readonly IDataProtector _protector;
-    private readonly ISessionManager _sessionManager; // nos falta
+    private readonly JwtSessionManager _sessionManager;
 
-    public ServicePage(ServiceFacade serviceFacade,
-                       IDataProtectionProvider provider,
-                       ISessionManager sessionManager) //nos falta
+    public ServicePage(
+        ServiceFacade serviceFacade,
+        IDataProtectionProvider provider,
+        JwtSessionManager sessionManager)
     {
         _serviceFacade = serviceFacade;
         _protector = provider.CreateProtector("ServiceProtector");
@@ -27,10 +28,14 @@ public class ServicePage : PageModel
 
     public async Task<IActionResult> OnGetAsync()
     {
-        Services = await _serviceFacade.GetAll();
+        Services = await _serviceFacade.GetAllAsync();
         return Page();
     }
 
+    public string ProtectId(int id)
+    {
+        return _protector.Protect(id.ToString());
+    }
     public string EncryptId(int id)
     {
         return _protector.Protect(id.ToString());
@@ -38,21 +43,11 @@ public class ServicePage : PageModel
 
     public async Task<IActionResult> OnPostDeleteAsync(string id)
     {
-        if (string.IsNullOrWhiteSpace(id))
+        if (string.IsNullOrEmpty(id))
             return RedirectToPage();
 
-        int decryptedId;
-        try
-        {
-            decryptedId = int.Parse(_protector.Unprotect(id));
-        }
-        catch
-        {
-            return RedirectToPage();
-        }
-
-        var success = await _serviceFacade.Delete(decryptedId, _sessionManager.UserId ?? 9999);
-
+        var decryptedId = int.Parse(_protector.Unprotect(id));
+        await _serviceFacade.DeleteByIdAsync(decryptedId, _sessionManager.UserId ?? 9999);
         return RedirectToPage();
     }
 }
