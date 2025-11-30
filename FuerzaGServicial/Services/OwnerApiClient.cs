@@ -1,39 +1,107 @@
-﻿using System.Net.Http.Json;
+﻿using FuerzaGServicial.Models.Common;
 using FuerzaGServicial.Models.Owners;
+using System.Net.Http.Json;
 
-namespace FuerzaGServicial.Services;
-
-public class OwnerApiClient
+namespace FuerzaGServicial.Services
 {
-    private readonly HttpClient _http;
-
-    public OwnerApiClient(HttpClient http)
+    public class OwnerApiClient
     {
-        _http = http;
-    }
+        private readonly HttpClient _http;
 
-    public async Task<List<OwnerModel>> GetAll() =>
-        await _http.GetFromJsonAsync<List<OwnerModel>>("api/Owner") 
-        ?? new List<OwnerModel>();
+        public OwnerApiClient(HttpClient http)
+        {
+            _http = http;
+        }
 
-    public async Task<OwnerModel?> GetById(int id) =>
-        await _http.GetFromJsonAsync<OwnerModel>($"api/Owner/{id}");
+        public async Task<List<OwnerModel>> GetAllAsync()
+        {
+            return await _http.GetFromJsonAsync<List<OwnerModel>>("api/owners") ?? new List<OwnerModel>();
+        }
 
-    public async Task<SuccessResponseModel?> Create(CreateOwnerModel model)
-    {
-        var response = await _http.PostAsJsonAsync("api/Owner/insert", model);
-        return await response.Content.ReadFromJsonAsync<SuccessResponseModel>();
-    }
+        public async Task<OwnerModel?> GetByIdAsync(int id)
+        {
+            return await _http.GetFromJsonAsync<OwnerModel>($"api/owners/{id}");
+        }
 
-    public async Task<SuccessResponseModel?> Update(int id, UpdateOwnerModel model)
-    {
-        var response = await _http.PutAsJsonAsync($"api/Owner/{id}", model);
-        return await response.Content.ReadFromJsonAsync<SuccessResponseModel>();
-    }
+        public async Task<ApiResponse<int>> CreateAsync(OwnerModel owner)
+        {
+            var response = await _http.PostAsJsonAsync("api/owners/create", owner);
 
-    public async Task<bool> Delete(int id)
-    {
-        var response = await _http.DeleteAsync($"api/Owner/{id}");
-        return response.IsSuccessStatusCode;
+            if (response.IsSuccessStatusCode)
+            {
+                var successResponse = await response.Content.ReadFromJsonAsync<SuccessResponse>();
+                return new ApiResponse<int>
+                {
+                    Success = true,
+                    Data = successResponse?.Id ?? 0,
+                    Message = successResponse?.Message ?? "Owner creado exitosamente"
+                };
+            }
+
+            if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                var errorResponse = await response.Content.ReadFromJsonAsync<ValidationErrorResponse>();
+                return new ApiResponse<int>
+                {
+                    Success = false,
+                    Message = errorResponse?.Message ?? "Error de validación",
+                    Errors = errorResponse?.Errors ?? new List<string>()
+                };
+            }
+
+            return new ApiResponse<int>
+            {
+                Success = false,
+                Message = "Error al crear el owner",
+                Errors = new List<string> { response.ReasonPhrase ?? "Error desconocido" }
+            };
+        }
+
+        public async Task<ApiResponse<bool>> UpdateAsync(OwnerModel owner, int userId)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Put, "api/owners");
+            request.Headers.Add("userId", userId.ToString());
+            request.Content = JsonContent.Create(owner);
+
+            var response = await _http.SendAsync(request);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var successResponse = await response.Content.ReadFromJsonAsync<SuccessResponse>();
+                return new ApiResponse<bool>
+                {
+                    Success = true,
+                    Data = true,
+                    Message = successResponse?.Message ?? "Owner actualizado exitosamente"
+                };
+            }
+
+            if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                var errorResponse = await response.Content.ReadFromJsonAsync<ValidationErrorResponse>();
+                return new ApiResponse<bool>
+                {
+                    Success = false,
+                    Message = errorResponse?.Message ?? "Error de validación",
+                    Errors = errorResponse?.Errors ?? new List<string>()
+                };
+            }
+
+            return new ApiResponse<bool>
+            {
+                Success = false,
+                Message = "Error al actualizar el owner",
+                Errors = new List<string> { response.ReasonPhrase ?? "Error desconocido" }
+            };
+        }
+
+        public async Task<bool> DeleteByIdAsync(int id, int userId)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Delete, $"api/owners/{id}");
+            request.Headers.Add("userId", userId.ToString());
+
+            var response = await _http.SendAsync(request);
+            return response.IsSuccessStatusCode;
+        }
     }
 }

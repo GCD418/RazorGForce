@@ -15,7 +15,6 @@
         public DateTime? UpdatedAt { get; set; }
         public bool IsActive { get; set; } = true;
 
-        // Propiedades auxiliares para el front
         public string FullName => $"{FirstLastname} {(SecondLastname ?? string.Empty)} {Name}".Trim();
         public string FullDocumentNumber => string.IsNullOrWhiteSpace(DocumentExtension) ? DocumentNumber : $"{DocumentNumber}-{DocumentExtension}";
     }
