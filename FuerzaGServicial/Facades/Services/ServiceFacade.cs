@@ -1,10 +1,9 @@
 ﻿using FuerzaGServicial.Models.Services;
 using FuerzaGServicial.Services;
-using FuerzaGServicial.Services.Facades.Services;
 
 namespace FuerzaGServicial.Facades.Services
 {
-    public class ServiceFacade : IServiceFacade
+    public class ServiceFacade
     {
         private readonly ServiceApiClient _client;
 

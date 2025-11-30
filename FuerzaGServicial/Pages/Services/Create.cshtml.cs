@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using FuerzaGServicial.Models.Services;
-using FuerzaGServicial.Services.Facades.Services;
+using FuerzaGServicial.Facades.Services;
 using FuerzaGServicial.Models.UserAccounts;
 
 namespace FuerzaGServicial.Pages.Services;
@@ -10,13 +10,13 @@ namespace FuerzaGServicial.Pages.Services;
 [Authorize(Roles = UserRoles.CEO)] //nos faltaba este atributo
 public class Create : PageModel
 {
-    private readonly IServiceFacade _serviceFacade;
+    private readonly ServiceFacade _serviceFacade;
 
     public List<string> ValidationErrors { get; set; } = new();
 
     [BindProperty] public CreateServiceModel Service { get; set; } = new();
 
-    public Create(IServiceFacade serviceFacade)
+    public Create(ServiceFacade serviceFacade)
     {
         _serviceFacade = serviceFacade;
     }

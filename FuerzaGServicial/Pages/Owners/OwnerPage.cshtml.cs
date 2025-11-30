@@ -1,11 +1,9 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using UserAccountService.Domain.Entities;
-using UserAccountService.Domain.Ports;
 using FuerzaGServicial.Services.Facades.Owners;
-using FuerzaGServicial.ModelsD.Owners;
+using FuerzaGServicial.Models.Owners;
 using FuerzaGServicial.Models.UserAccounts;
 
 namespace FuerzaGServicial.Pages.Owners;
@@ -13,12 +11,12 @@ namespace FuerzaGServicial.Pages.Owners;
 [Authorize(Roles = UserRoles.Manager)]
 public class OwnerPage : PageModel
 {
-    private readonly IOwnerFacade _ownerFacade;
+    private readonly OwnerFacade _ownerFacade;
     private readonly IDataProtector _protector;
     private readonly ISessionManager _sessionManager;
 
     public OwnerPage(
-        IOwnerFacade ownerFacade,
+        OwnerFacade ownerFacade,
         IDataProtectionProvider provider,
         ISessionManager sessionManager)
     {

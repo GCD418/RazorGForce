@@ -1,11 +1,9 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using FuerzaGServicial.ModelsD.Technicians;
+using FuerzaGServicial.Models.Technicians;
 using FuerzaGServicial.Services.Facades.Technicians;
 using FuerzaGServicial.Models.UserAccounts;
-using UserAccountService.Domain.Entities;
-using UserAccountService.Domain.Ports;
 namespace FuerzaGServicial.Pages.Technicians;
 
 

@@ -1,4 +1,4 @@
-namespace FuerzaGServicial.ModelsD.Owners;
+﻿namespace FuerzaGServicial.Models.Owners;
 
 public class SuccessResponseModel
 {

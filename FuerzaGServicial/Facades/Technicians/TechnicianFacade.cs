@@ -1,8 +1,8 @@
-using FuerzaGServicial.ModelsD.Technicians;
+﻿using FuerzaGServicial.Models.Technicians;
 
 namespace FuerzaGServicial.Services.Facades.Technicians
 {
-    public class TechnicianFacade : ITechnicianFacade
+    public class TechnicianFacade
     {
         private readonly TechnicianApiClient _client;
 

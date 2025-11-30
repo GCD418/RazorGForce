@@ -1,19 +1,17 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using FuerzaGServicial.ModelsD.Technicians;
+using FuerzaGServicial.Models.Technicians;
 using FuerzaGServicial.Services.Facades.Technicians;
 using FuerzaGServicial.Models.UserAccounts;
-using UserAccountService.Domain.Entities;
-using UserAccountService.Domain.Ports;
 
 namespace FuerzaGServicial.Pages.Technicians;
 
 [Authorize(Roles = UserRoles.Manager)]
 public class Edit : PageModel
 {
-    private readonly ITechnicianFacade _technicianFacade;
+    private readonly TechnicianFacade _technicianFacade;
     private readonly IDataProtector _protector;
     private readonly ISessionManager _sessionManager;
 
@@ -23,7 +21,7 @@ public class Edit : PageModel
     public UpdateTechnicianModel Technician { get; set; } = new();
 
     public Edit(
-        ITechnicianFacade technicianFacade,
+        TechnicianFacade technicianFacade,
         IDataProtectionProvider provider,
         ,ISessionManager sessionManager)
     {

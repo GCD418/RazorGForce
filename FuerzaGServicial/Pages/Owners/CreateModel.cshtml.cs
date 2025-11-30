@@ -1,9 +1,7 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using UserAccountService.Domain.Entities;
-using UserAccountService.Domain.Ports;
-using FuerzaGServicial.ModelsD.Owners;
+using FuerzaGServicial.Models.Owners;
 using FuerzaGServicial.Services.Facades.Owners;
 using FuerzaGServicial.Models.UserAccounts;
 
@@ -12,8 +10,8 @@ namespace FuerzaGServicial.Pages.Owners;
 [Authorize(Roles = UserRoles.Manager)]
 public class CreateModel : PageModel
 {
-    private readonly IOwnerFacade _ownerFacade;
-    private readonly ISessionManager _sessionManager;
+    private readonly OwnerFacade _ownerFacade;
+    private readonly ISessionManager _sessionManager; /*Cambiar al nuevo como esta en UserAccout*/
 
     public List<string> ValidationErrors { get; set; } = [];
 
@@ -21,7 +19,7 @@ public class CreateModel : PageModel
     public CreateOwnerModel Owner { get; set; } = new();
 
     public CreateModel(
-        IOwnerFacade ownerFacade,
+        OwnerFacade ownerFacade,
         ISessionManager sessionManager)
     {
         _ownerFacade = ownerFacade;

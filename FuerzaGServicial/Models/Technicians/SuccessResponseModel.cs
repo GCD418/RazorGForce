@@ -1,4 +1,4 @@
-namespace FuerzaGServicial.ModelsD.Technicians
+﻿namespace FuerzaGServicial.Models.Technicians
 {
     public class SuccessResponseModel
     {

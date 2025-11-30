@@ -7,13 +7,19 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Compile Remove="Facades\UserAccounts\**" />
+      <Content Remove="Facades\UserAccounts\**" />
+      <EmbeddedResource Remove="Facades\UserAccounts\**" />
+      <None Remove="Facades\UserAccounts\**" />
+    </ItemGroup>
+
+    <ItemGroup>
       <_ContentIncludedByDefault Remove="Pages\Reports\BrandStatistics.cshtml" />
       <_ContentIncludedByDefault Remove="Pages\Reports\Index.cshtml" />
       <_ContentIncludedByDefault Remove="Pages\Reports\VehicleReport.cshtml" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Facades\UserAccounts\" />
       <Folder Include="Facades\Owners\" />
       <Folder Include="Facades\Technicians\" />
       <Folder Include="Models\UserAccounts\" />

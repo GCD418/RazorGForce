@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using FuerzaGServicial.Models.Services;
-using FuerzaGServicial.Services.Facades.Services;
+using FuerzaGServicial.Facades.Services;
 
 namespace FuerzaGServicial.Pages.Services;
 
@@ -12,11 +12,11 @@ public class ServicePage : PageModel
 {
     public IEnumerable<ServiceModel> Services { get; set; } = Enumerable.Empty<ServiceModel>();
 
-    private readonly IServiceFacade _serviceFacade;
+    private readonly ServiceFacade _serviceFacade;
     private readonly IDataProtector _protector;
     private readonly ISessionManager _sessionManager; // nos falta
 
-    public ServicePage(IServiceFacade serviceFacade,
+    public ServicePage(ServiceFacade serviceFacade,
                        IDataProtectionProvider provider,
                        ISessionManager sessionManager) //nos falta
     {

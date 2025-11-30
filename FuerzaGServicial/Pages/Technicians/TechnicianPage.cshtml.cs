@@ -1,11 +1,9 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using FuerzaGServicial.ModelsD.Technicians;
-using FuerzaGServicial.Services.Facades.Technicians;
-using UserAccountService.Domain.Entities;
-using UserAccountService.Domain.Ports;
+using FuerzaGServicial.Models.Technicians;
+using FuerzaGServicial.Facades.TechnicianFacade;
 
 
 namespace FuerzaGServicial.Pages.Technicians;
@@ -13,14 +11,14 @@ namespace FuerzaGServicial.Pages.Technicians;
 [Authorize(Roles = "Manager,CEO")]
 public class TechnicianPage : PageModel
 {
-    private readonly ITechnicianFacade _technicianFacade;
+    private readonly TechnicianFacade _technicianFacade;
     private readonly IDataProtector _protector;
     private readonly ISessionManager _sessionManager;
 
     public IEnumerable<TechnicianModel> Technicians { get; set; } = Enumerable.Empty<TechnicianModel>();
 
     public TechnicianPage(
-        ITechnicianFacade technicianFacade,
+        TechnicianFacade technicianFacade,
         IDataProtectionProvider provider,
         ISessionManager sessionManager)
     {

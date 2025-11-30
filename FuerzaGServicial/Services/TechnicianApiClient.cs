@@ -1,4 +1,4 @@
-using FuerzaGServicial.ModelsD.Technicians;
+﻿using FuerzaGServicial.Models.Technicians;
 
 namespace FuerzaGServicial.Services
 {

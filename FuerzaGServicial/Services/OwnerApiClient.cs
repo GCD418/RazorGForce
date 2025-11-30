@@ -1,5 +1,5 @@
-using System.Net.Http.Json;
-using FuerzaGServicial.ModelsD.Owners;
+﻿using System.Net.Http.Json;
+using FuerzaGServicial.Models.Owners;
 
 namespace FuerzaGServicial.Services;
 

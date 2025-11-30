@@ -1,9 +1,8 @@
-using FuerzaGServicial.ModelsD.Owners;
-using FuerzaGServicial.Services;
+﻿using FuerzaGServicial.Models.Owners;
 
 namespace FuerzaGServicial.Services.Facades.Owners;
 
-public class OwnerFacade : IOwnerFacade
+public class OwnerFacade
 {
     private readonly OwnerApiClient _client;
 

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.DataProtection;
 using FuerzaGServicial.Models.Services;
-using FuerzaGServicial.Services.Facades.Services;
+using FuerzaGServicial.Facades.Services;
 using FuerzaGServicial.Models.UserAccounts;
 
 namespace FuerzaGServicial.Pages.Services;
@@ -11,14 +11,14 @@ namespace FuerzaGServicial.Pages.Services;
 [Authorize(Roles = UserRoles.CEO)] //falta agregar el atributo
 public class Edit : PageModel
 {
-    private readonly IServiceFacade _serviceFacade;
+    private readonly ServiceFacade _serviceFacade;
     private readonly IDataProtector _protector;
 
     public List<string> ValidationErrors { get; set; } = new();
 
     [BindProperty] public UpdateServiceModel Service { get; set; } = new();
 
-    public Edit(IServiceFacade serviceFacade, IDataProtectionProvider provider)
+    public Edit(ServiceFacade serviceFacade, IDataProtectionProvider provider)
     {
         _serviceFacade = serviceFacade;
         _protector = provider.CreateProtector("ServiceProtector");
