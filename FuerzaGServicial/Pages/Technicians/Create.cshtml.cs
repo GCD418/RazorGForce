@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FuerzaGServicial.Facades;
+using FuerzaGServicial.Models.Technicians;
+using FuerzaGServicial.Models.UserAccounts;
+using FuerzaGServicial.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using FuerzaGServicial.Models.Technicians;
-using FuerzaGServicial.Services.Facades.Technicians;
-using FuerzaGServicial.Models.UserAccounts;
-using FuerzaGServicial.Facades;
 
 namespace FuerzaGServicial.Pages.Technicians;
 
@@ -12,36 +12,23 @@ namespace FuerzaGServicial.Pages.Technicians;
 public class Create : PageModel
 {
     private readonly TechnicianFacade _technicianFacade;
-    private readonly AuthFacade _authFacade;
+    private readonly JwtSessionManager _sessionManager;
 
     public List<string> ValidationErrors { get; set; } = new();
 
-    // ⬅ NECESARIO, igual que en UserAccount/Create
     [BindProperty]
-    public CreateUserAccountModel UserAccount { get; set; } = new();
-
-    [BindProperty]
-    public CreateTechnicianModel Technician { get; set; } = new();
+    public TechnicianModel Technician { get; set; } = new();
 
     public Create(
         TechnicianFacade technicianFacade,
-        AuthFacade authFacade)
+        JwtSessionManager sessionManager)
     {
         _technicianFacade = technicianFacade;
-        _authFacade = authFacade;
+        _sessionManager = sessionManager;
     }
 
-    public async Task<IActionResult> OnGet()
+    public void OnGet()
     {
-        var userInfo = await _authFacade.GetCurrentUserAsync();
-
-        if (userInfo == null)
-        {
-            return RedirectToPage("/Account/Login");
-        }
-
-        Technician.UserId = userInfo.Id;
-        return Page();
     }
 
     public async Task<IActionResult> OnPostAsync()
@@ -53,43 +40,17 @@ public class Create : PageModel
             return Page();
         }
 
-        var userResponse = await _authFacade.CreateUserAccountAsync(UserAccount);
+        Technician.ModifiedByUserId = _sessionManager.UserId ?? 9999;
 
-        if (!userResponse.Success)
+        var response = await _technicianFacade.CreateAsync(Technician);
+
+        if (!response.Success)
         {
-            ValidationErrors = userResponse.Errors;
-            ModelState.AddModelError(string.Empty, userResponse.Message);
-            return Page();
-        }
-
-        Technician.UserId = userResponse.CreatedId;
-
-        var techResponse = await _technicianFacade.CreateTechnicianAsync(Technician);
-
-        if (!techResponse.Success)
-        {
-            ValidationErrors = techResponse.Errors;
-            ModelState.AddModelError(string.Empty, techResponse.Message);
+            ValidationErrors = response.Errors;
+            ModelState.AddModelError(string.Empty, response.Message);
             return Page();
         }
 
         return RedirectToPage("/Technicians/TechnicianPage");
-    }
-
-    private string MapErrorToField(string error)
-    {
-        var e = error.ToLowerInvariant();
-
-        if (e.Contains("nombre")) return "Name";
-        if (e.Contains("apellido")) return "FirstLastName";
-        if (e.Contains("segundo")) return "SecondLastName";
-        if (e.Contains("teléfono") || e.Contains("telefono")) return "PhoneNumber";
-        if (e.Contains("correo") || e.Contains("email")) return "Email";
-        if (e.Contains("documento")) return "DocumentNumber";
-        if (e.Contains("extensión") || e.Contains("extension")) return "DocumentExtension";
-        if (e.Contains("dirección") || e.Contains("direccion")) return "Address";
-        if (e.Contains("salario")) return "BaseSalary";
-
-        return string.Empty;
     }
 }
