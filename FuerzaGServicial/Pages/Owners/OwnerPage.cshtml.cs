@@ -37,6 +37,7 @@ public class OwnerPageModel : PageModel
     {
         return _protector.Protect(id.ToString());
     }
+    public string EncryptId(int id) { return _protector.Protect(id.ToString()); }
 
     public async Task<IActionResult> OnPostDeleteAsync(string id)
     {
