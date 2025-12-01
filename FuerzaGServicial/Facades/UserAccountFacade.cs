@@ -23,9 +23,9 @@ public class UserAccountFacade
         return await _apiClient.GetByIdAsync(id);
     }
 
-    public async Task<ApiResponse<int>> CreateAsync(UserAccount userAccount)
+    public async Task<ApiResponse<int>> CreateAsync(UserAccount userAccount, int userId)
     {
-        return await _apiClient.CreateAsync(userAccount);
+        return await _apiClient.CreateAsync(userAccount, userId);
     }
 
     public async Task<ApiResponse<bool>> UpdateAsync(UserAccount userAccount, int userId)
