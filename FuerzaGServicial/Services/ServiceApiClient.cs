@@ -15,7 +15,7 @@ namespace FuerzaGServicial.Services
 
         public async Task<List<ServiceModel>> GetAllAsync()
         {
-            return await _http.GetFromJsonAsync<List<ServiceModel>>("api/services") ?? new List<ServiceModel>();
+            return await _http.GetFromJsonAsync<List<ServiceModel>>("api/service") ?? new List<ServiceModel>();
         }
 
         public async Task<ServiceModel?> GetByIdAsync(int id)
