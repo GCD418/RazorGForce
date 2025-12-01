@@ -20,12 +20,12 @@ namespace FuerzaGServicial.Services
 
         public async Task<ServiceModel?> GetByIdAsync(int id)
         {
-            return await _http.GetFromJsonAsync<ServiceModel>($"api/services/{id}");
+            return await _http.GetFromJsonAsync<ServiceModel>($"api/service/{id}");
         }
 
         public async Task<ApiResponse<int>> CreateAsync(ServiceModel service)
         {
-            var response = await _http.PostAsJsonAsync("api/services/create", service);
+            var response = await _http.PostAsJsonAsync("api/service/create", service);
 
             if (response.IsSuccessStatusCode)
             {
@@ -59,7 +59,7 @@ namespace FuerzaGServicial.Services
 
         public async Task<ApiResponse<bool>> UpdateAsync(ServiceModel service, int userId)
         {
-            var request = new HttpRequestMessage(HttpMethod.Put, "api/services");
+            var request = new HttpRequestMessage(HttpMethod.Put, "api/service");
             request.Headers.Add("userId", userId.ToString());
             request.Content = JsonContent.Create(service);
 
@@ -97,7 +97,7 @@ namespace FuerzaGServicial.Services
 
         public async Task<bool> DeleteByIdAsync(int id, int userId)
         {
-            var request = new HttpRequestMessage(HttpMethod.Delete, $"api/services/{id}");
+            var request = new HttpRequestMessage(HttpMethod.Delete, $"api/service/{id}");
             request.Headers.Add("userId", userId.ToString());
 
             var response = await _http.SendAsync(request);

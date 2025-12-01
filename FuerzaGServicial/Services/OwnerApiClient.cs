@@ -15,17 +15,17 @@ namespace FuerzaGServicial.Services
 
         public async Task<List<OwnerModel>> GetAllAsync()
         {
-            return await _http.GetFromJsonAsync<List<OwnerModel>>("api/owners") ?? new List<OwnerModel>();
+            return await _http.GetFromJsonAsync<List<OwnerModel>>("api/owner") ?? new List<OwnerModel>();
         }
 
         public async Task<OwnerModel?> GetByIdAsync(int id)
         {
-            return await _http.GetFromJsonAsync<OwnerModel>($"api/owners/{id}");
+            return await _http.GetFromJsonAsync<OwnerModel>($"api/owner/{id}");
         }
 
         public async Task<ApiResponse<int>> CreateAsync(OwnerModel owner)
         {
-            var response = await _http.PostAsJsonAsync("api/owners/create", owner);
+            var response = await _http.PostAsJsonAsync("api/owner/create", owner);
 
             if (response.IsSuccessStatusCode)
             {
@@ -59,7 +59,7 @@ namespace FuerzaGServicial.Services
 
         public async Task<ApiResponse<bool>> UpdateAsync(OwnerModel owner, int userId)
         {
-            var request = new HttpRequestMessage(HttpMethod.Put, "api/owners");
+            var request = new HttpRequestMessage(HttpMethod.Put, "api/owner");
             request.Headers.Add("userId", userId.ToString());
             request.Content = JsonContent.Create(owner);
 
@@ -97,7 +97,7 @@ namespace FuerzaGServicial.Services
 
         public async Task<bool> DeleteByIdAsync(int id, int userId)
         {
-            var request = new HttpRequestMessage(HttpMethod.Delete, $"api/owners/{id}");
+            var request = new HttpRequestMessage(HttpMethod.Delete, $"api/owner/{id}");
             request.Headers.Add("userId", userId.ToString());
 
             var response = await _http.SendAsync(request);
