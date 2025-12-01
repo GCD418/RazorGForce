@@ -15,17 +15,21 @@ namespace FuerzaGServicial.Services
 
         public async Task<List<TechnicianModel>> GetAllAsync()
         {
-            return await _http.GetFromJsonAsync<List<TechnicianModel>>("api/technicians") ?? new List<TechnicianModel>();
+            return await _http.GetFromJsonAsync<List<TechnicianModel>>("api/technician") ?? new List<TechnicianModel>();
         }
 
         public async Task<TechnicianModel?> GetByIdAsync(int id)
         {
-            return await _http.GetFromJsonAsync<TechnicianModel>($"api/technicians/{id}");
+            return await _http.GetFromJsonAsync<TechnicianModel>($"api/technician/{id}");
         }
 
-        public async Task<ApiResponse<int>> CreateAsync(TechnicianModel technician)
+        public async Task<ApiResponse<int>> CreateAsync(TechnicianModel technician, int userId)
         {
-            var response = await _http.PostAsJsonAsync("api/technicians/create", technician);
+            var request = new HttpRequestMessage(HttpMethod.Post, "api/technician/create");
+            request.Headers.Add("userId", userId.ToString());
+            request.Content = JsonContent.Create(technician);
+            
+            var response = await _http.SendAsync(request);
 
             if (response.IsSuccessStatusCode)
             {
@@ -59,7 +63,7 @@ namespace FuerzaGServicial.Services
 
         public async Task<ApiResponse<bool>> UpdateAsync(TechnicianModel technician, int userId)
         {
-            var request = new HttpRequestMessage(HttpMethod.Put, "api/technicians");
+            var request = new HttpRequestMessage(HttpMethod.Put, "api/technician");
             request.Headers.Add("userId", userId.ToString());
             request.Content = JsonContent.Create(technician);
 
@@ -97,7 +101,7 @@ namespace FuerzaGServicial.Services
 
         public async Task<bool> DeleteByIdAsync(int id, int userId)
         {
-            var request = new HttpRequestMessage(HttpMethod.Delete, $"api/technicians/{id}");
+            var request = new HttpRequestMessage(HttpMethod.Delete, $"api/technician/{id}");
             request.Headers.Add("userId", userId.ToString());
 
             var response = await _http.SendAsync(request);

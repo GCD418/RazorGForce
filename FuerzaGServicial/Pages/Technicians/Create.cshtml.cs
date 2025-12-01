@@ -40,9 +40,7 @@ public class Create : PageModel
             return Page();
         }
 
-        Technician.ModifiedByUserId = _sessionManager.UserId ?? 9999;
-
-        var response = await _technicianFacade.CreateAsync(Technician);
+        var response = await _technicianFacade.CreateAsync(Technician, _sessionManager.UserId ?? 9999);
 
         if (!response.Success)
         {
