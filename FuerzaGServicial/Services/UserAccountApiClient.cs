@@ -35,9 +35,15 @@ public class UserAccountApiClient
         return await _http.GetFromJsonAsync<UserAccount>($"api/useraccounts/{id}");
     }
 
-    public async Task<ApiResponse<int>> CreateAsync(UserAccount userAccount)
+    public async Task<ApiResponse<int>> CreateAsync(UserAccount userAccount, int userId)
     {
-        var response = await _http.PostAsJsonAsync("api/useraccounts/create", userAccount);
+        // var response = await _http.PostAsJsonAsync("api/useraccounts/create", userAccount);
+        
+        var request = new HttpRequestMessage(HttpMethod.Post, "api/useraccounts/create");
+        request.Headers.Add("userId", userId.ToString());
+        request.Content = JsonContent.Create(userAccount);
+            
+        var response = await _http.SendAsync(request);
         
         if (response.IsSuccessStatusCode)
         {

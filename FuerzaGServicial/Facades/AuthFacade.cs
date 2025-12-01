@@ -145,8 +145,8 @@ public class AuthFacade
         }
     }
 
-    public async Task<ApiResponse<int>> CreateUserAccountAsync(UserAccount userAccount)
+    public async Task<ApiResponse<int>> CreateUserAccountAsync(UserAccount userAccount, int userId)
     {
-        return await _apiClient.CreateAsync(userAccount);
+        return await _apiClient.CreateAsync(userAccount, userId);
     }
 }

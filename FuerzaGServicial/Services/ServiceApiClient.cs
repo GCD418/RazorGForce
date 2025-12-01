@@ -1,4 +1,6 @@
-﻿using FuerzaGServicial.Models.Services;
+﻿using FuerzaGServicial.Models.Common;
+using FuerzaGServicial.Models.Services;
+using System.Net.Http.Json;
 
 namespace FuerzaGServicial.Services
 {
@@ -11,41 +13,93 @@ namespace FuerzaGServicial.Services
             _http = http;
         }
 
-        // Obtener todos los servicios
         public async Task<List<ServiceModel>> GetAllAsync()
         {
-            return await _http.GetFromJsonAsync<List<ServiceModel>>("api/Service") ?? new List<ServiceModel>();
+            return await _http.GetFromJsonAsync<List<ServiceModel>>("api/service") ?? new List<ServiceModel>();
         }
 
-        // Obtener servicio por Id
         public async Task<ServiceModel?> GetByIdAsync(int id)
         {
-            return await _http.GetFromJsonAsync<ServiceModel>($"api/Service/{id}");
+            return await _http.GetFromJsonAsync<ServiceModel>($"api/service/{id}");
         }
 
-        // Insertar nuevo servicio
-        public async Task<SuccessResponseModel?> InsertAsync(CreateServiceModel request)
+        public async Task<ApiResponse<int>> CreateAsync(ServiceModel service)
         {
-            var response = await _http.PostAsJsonAsync("api/Service/insert", request);
+            var response = await _http.PostAsJsonAsync("api/service/create", service);
+
             if (response.IsSuccessStatusCode)
-                return await response.Content.ReadFromJsonAsync<SuccessResponseModel>();
-            return null;
+            {
+                var successResponse = await response.Content.ReadFromJsonAsync<SuccessResponse>();
+                return new ApiResponse<int>
+                {
+                    Success = true,
+                    Data = successResponse?.Id ?? 0,
+                    Message = successResponse?.Message ?? "Servicio creado exitosamente"
+                };
+            }
+
+            if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                var errorResponse = await response.Content.ReadFromJsonAsync<ValidationErrorResponse>();
+                return new ApiResponse<int>
+                {
+                    Success = false,
+                    Message = errorResponse?.Message ?? "Error de validación",
+                    Errors = errorResponse?.Errors ?? new List<string>()
+                };
+            }
+
+            return new ApiResponse<int>
+            {
+                Success = false,
+                Message = "Error al crear el servicio",
+                Errors = new List<string> { response.ReasonPhrase ?? "Error desconocido" }
+            };
         }
 
-        // Actualizar servicio
-        public async Task<SuccessResponseModel?> UpdateAsync(int id, UpdateServiceModel request)
+        public async Task<ApiResponse<bool>> UpdateAsync(ServiceModel service, int userId)
         {
-            var response = await _http.PutAsJsonAsync($"api/Service/{id}", request);
+            var request = new HttpRequestMessage(HttpMethod.Put, "api/service");
+            request.Headers.Add("userId", userId.ToString());
+            request.Content = JsonContent.Create(service);
+
+            var response = await _http.SendAsync(request);
+
             if (response.IsSuccessStatusCode)
-                return await response.Content.ReadFromJsonAsync<SuccessResponseModel>();
-            return null;
+            {
+                var successResponse = await response.Content.ReadFromJsonAsync<SuccessResponse>();
+                return new ApiResponse<bool>
+                {
+                    Success = true,
+                    Data = true,
+                    Message = successResponse?.Message ?? "Servicio actualizado exitosamente"
+                };
+            }
+
+            if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                var errorResponse = await response.Content.ReadFromJsonAsync<ValidationErrorResponse>();
+                return new ApiResponse<bool>
+                {
+                    Success = false,
+                    Message = errorResponse?.Message ?? "Error de validación",
+                    Errors = errorResponse?.Errors ?? new List<string>()
+                };
+            }
+
+            return new ApiResponse<bool>
+            {
+                Success = false,
+                Message = "Error al actualizar el servicio",
+                Errors = new List<string> { response.ReasonPhrase ?? "Error desconocido" }
+            };
         }
 
-        // Eliminar servicio
-        public async Task<bool> DeleteAsync(int id, int userId)
+        public async Task<bool> DeleteByIdAsync(int id, int userId)
         {
-            var request = new HttpRequestMessage(HttpMethod.Delete, $"api/Service/{id}");
-            request.Headers.Add("User-Id", userId.ToString());
+            var request = new HttpRequestMessage(HttpMethod.Delete, $"api/service/{id}");
+            request.Headers.Add("userId", userId.ToString());
+
             var response = await _http.SendAsync(request);
             return response.IsSuccessStatusCode;
         }

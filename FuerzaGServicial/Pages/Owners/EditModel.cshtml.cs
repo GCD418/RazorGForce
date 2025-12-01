@@ -1,49 +1,77 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FuerzaGServicial.Facades;
+using FuerzaGServicial.Models.Owners;
+using FuerzaGServicial.Models.UserAccounts;
+using FuerzaGServicial.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using FuerzaGServicial.Services.Facades.Owners;
-using FuerzaGServicial.Models.Owners;
 
 namespace FuerzaGServicial.Pages.Owners;
 
 [Authorize(Roles = UserRoles.Manager)]
-public class OwnerPage : PageModel
+public class EditModel : PageModel
 {
     private readonly OwnerFacade _ownerFacade;
     private readonly IDataProtector _protector;
-    private readonly ISessionManager _sessionManager; /*Cambiar al nuevo como esta en UserAccout*/
+    private readonly JwtSessionManager _sessionManager;
 
-    public OwnerPage(
+    [BindProperty]
+    public OwnerModel OwnerModel { get; set; } = new();
+
+    public List<string> ValidationErrors { get; set; } = new();
+
+    public EditModel(
         OwnerFacade ownerFacade,
         IDataProtectionProvider provider,
-        ISessionManager sessionManager) /*Cambiar al nuevo como esta en UserAccout*/
+        JwtSessionManager sessionManager)
     {
         _ownerFacade = ownerFacade;
         _protector = provider.CreateProtector("OwnerProtector");
         _sessionManager = sessionManager;
     }
 
-    public List<OwnerModelResponse> Owners { get; set; } = new();
-
-    public async Task<IActionResult> OnGetAsync()
+    public async Task<IActionResult> OnGetAsync(string id)
     {
-        Owners = await _ownerFacade.GetAll();
+        if (string.IsNullOrEmpty(id))
+            return RedirectToPage("/Owners/OwnerPage");
+
+        if (!int.TryParse(_protector.Unprotect(id), out var decryptedId))
+            return RedirectToPage("/Owners/OwnerPage");
+
+        var owner = await _ownerFacade.GetByIdAsync(decryptedId);
+        if (owner == null)
+            return RedirectToPage("/Owners/OwnerPage");
+
+        OwnerModel = owner;
         return Page();
     }
 
-    public string EncryptId(int id)
+    public async Task<IActionResult> OnPostAsync()
     {
-        return _protector.Protect(id.ToString());
-    }
+        ValidationErrors.Clear();
 
-    public async Task<IActionResult> OnPostDeleteAsync(string id)
-    {
-        var decryptedId = int.Parse(_protector.Unprotect(id));
-        var userId = _sessionManager.UserId ?? 9999;
+        if (!ModelState.IsValid)
+        {
+            return Page();
+        }
 
-        await _ownerFacade.Delete(decryptedId, userId);
+        var existingOwner = await _ownerFacade.GetByIdAsync(OwnerModel.Id);
+        if (existingOwner != null)
+        {
+            OwnerModel.CreatedAt = existingOwner.CreatedAt;
+        }
 
-        return RedirectToPage();
+        var response = await _ownerFacade.UpdateAsync(OwnerModel, _sessionManager.UserId ?? 9999);
+
+        if (!response.Success)
+        {
+            ValidationErrors = response.Errors;
+            ModelState.AddModelError(string.Empty, response.Message);
+            return Page();
+        }
+
+        TempData["SuccessMessage"] = response.Message;
+        return RedirectToPage("/Owners/OwnerPage");
     }
 }

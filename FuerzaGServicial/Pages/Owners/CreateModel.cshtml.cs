@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FuerzaGServicial.Facades;
+using FuerzaGServicial.Models.Owners;
+using FuerzaGServicial.Models.UserAccounts;
+using FuerzaGServicial.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using FuerzaGServicial.Models.Owners;
-using FuerzaGServicial.Services.Facades.Owners;
-using FuerzaGServicial.Models.UserAccounts;
 
 namespace FuerzaGServicial.Pages.Owners;
 
@@ -11,34 +12,38 @@ namespace FuerzaGServicial.Pages.Owners;
 public class CreateModel : PageModel
 {
     private readonly OwnerFacade _ownerFacade;
-    private readonly ISessionManager _sessionManager; /*Cambiar al nuevo como esta en UserAccout*/
-
-    public List<string> ValidationErrors { get; set; } = [];
+    private readonly JwtSessionManager _sessionManager;
+    public List<string> ValidationErrors { get; set; } = new();
 
     [BindProperty]
-    public CreateOwnerModel Owner { get; set; } = new();
+    public OwnerModel Owner { get; set; } = new();
 
-    public CreateModel(
-        OwnerFacade ownerFacade,
-        ISessionManager sessionManager)
+    public CreateModel(OwnerFacade ownerFacade, JwtSessionManager sessionManager)
     {
         _ownerFacade = ownerFacade;
         _sessionManager = sessionManager;
     }
 
-    public void OnGet() { }
+    public void OnGet()
+    {
+        Owner.IsActive = true;
+    }
 
     public async Task<IActionResult> OnPostAsync()
     {
-        ModelState.Clear();
+        ValidationErrors.Clear();
 
-        Owner.UserId = _sessionManager.UserId ?? 9999;
-
-        var result = await _ownerFacade.Create(Owner);
-
-        if (result == null)
+        if (!ModelState.IsValid)
         {
-            ModelState.AddModelError(string.Empty, "No se pudo crear el dueño.");
+            return Page();
+        }
+
+        var response = await _ownerFacade.CreateAsync(Owner, _sessionManager.UserId ?? 9999);
+
+        if (!response.Success)
+        {
+            ValidationErrors = response.Errors;
+            ModelState.AddModelError(string.Empty, response.Message);
             return Page();
         }
 

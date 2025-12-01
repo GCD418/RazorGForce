@@ -1,50 +1,51 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FuerzaGServicial.Facades;
+using FuerzaGServicial.Models.Owners;
+using FuerzaGServicial.Models.UserAccounts;
+using FuerzaGServicial.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using FuerzaGServicial.Services.Facades.Owners;
-using FuerzaGServicial.Models.Owners;
-using FuerzaGServicial.Models.UserAccounts;
 
 namespace FuerzaGServicial.Pages.Owners;
 
 [Authorize(Roles = UserRoles.Manager)]
-public class OwnerPage : PageModel
+public class OwnerPageModel : PageModel
 {
+    public IEnumerable<OwnerModel> Owners { get; set; } = new List<OwnerModel>();
     private readonly OwnerFacade _ownerFacade;
     private readonly IDataProtector _protector;
-    private readonly ISessionManager _sessionManager;
+    private readonly JwtSessionManager _sessionManager;
 
-    public OwnerPage(
+    public OwnerPageModel(
         OwnerFacade ownerFacade,
         IDataProtectionProvider provider,
-        ISessionManager sessionManager)
+        JwtSessionManager sessionManager)
     {
         _ownerFacade = ownerFacade;
         _protector = provider.CreateProtector("OwnerProtector");
         _sessionManager = sessionManager;
     }
 
-    public List<OwnerModelResponse> Owners { get; set; } = new();
-
     public async Task<IActionResult> OnGetAsync()
     {
-        Owners = await _ownerFacade.GetAll();
+        Owners = await _ownerFacade.GetAllAsync();
         return Page();
     }
 
-    public string EncryptId(int id)
+    public string ProtectId(int id)
     {
         return _protector.Protect(id.ToString());
     }
+    public string EncryptId(int id) { return _protector.Protect(id.ToString()); }
 
     public async Task<IActionResult> OnPostDeleteAsync(string id)
     {
+        if (string.IsNullOrEmpty(id))
+            return RedirectToPage();
+
         var decryptedId = int.Parse(_protector.Unprotect(id));
-        var userId = _sessionManager.UserId ?? 9999;
-
-        await _ownerFacade.Delete(decryptedId, userId);
-
+        await _ownerFacade.DeleteByIdAsync(decryptedId, _sessionManager.UserId ?? 9999);
         return RedirectToPage();
     }
 }
