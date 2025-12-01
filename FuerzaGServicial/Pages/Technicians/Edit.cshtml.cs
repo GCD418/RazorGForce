@@ -1,6 +1,7 @@
 ﻿using FuerzaGServicial.Facades;
 using FuerzaGServicial.Models.Technicians;
 using FuerzaGServicial.Models.UserAccounts;
+using FuerzaGServicial.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
@@ -13,16 +14,18 @@ public class Edit : PageModel
 {
     private readonly TechnicianFacade _technicianFacade;
     private readonly IDataProtector _protector;
+    private readonly JwtSessionManager _sessionManager;
 
     public List<string> ValidationErrors { get; set; } = new();
 
     [BindProperty]
     public TechnicianModel Technician { get; set; } = new();
 
-    public Edit(TechnicianFacade technicianFacade, IDataProtectionProvider provider)
+    public Edit(TechnicianFacade technicianFacade, IDataProtectionProvider provider, JwtSessionManager sessionManager)
     {
         _technicianFacade = technicianFacade;
         _protector = provider.CreateProtector("TechnicianProtector");
+        _sessionManager = sessionManager;
     }
 
     public async Task<IActionResult> OnGetAsync(string id)
@@ -68,7 +71,7 @@ public class Edit : PageModel
         if (!ModelState.IsValid)
             return Page();
 
-        var result = await _technicianFacade.UpdateAsync(Technician, Technician.Id);
+        var result = await _technicianFacade.UpdateAsync(Technician, _sessionManager.UserId ?? 9999);
         if (result == null)
         {
             ModelState.AddModelError(string.Empty, "No se pudo actualizar el técnico.");
