@@ -1,6 +1,7 @@
 ﻿using FuerzaGServicial.Facades;
 using FuerzaGServicial.Models.Owners;
 using FuerzaGServicial.Models.UserAccounts;
+using FuerzaGServicial.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -11,15 +12,16 @@ namespace FuerzaGServicial.Pages.Owners;
 public class CreateModel : PageModel
 {
     private readonly OwnerFacade _ownerFacade;
-
+    private readonly JwtSessionManager _sessionManager;
     public List<string> ValidationErrors { get; set; } = new();
 
     [BindProperty]
     public OwnerModel Owner { get; set; } = new();
 
-    public CreateModel(OwnerFacade ownerFacade)
+    public CreateModel(OwnerFacade ownerFacade, JwtSessionManager sessionManager)
     {
         _ownerFacade = ownerFacade;
+        _sessionManager = sessionManager;
     }
 
     public void OnGet()
@@ -36,7 +38,7 @@ public class CreateModel : PageModel
             return Page();
         }
 
-        var response = await _ownerFacade.CreateAsync(Owner);
+        var response = await _ownerFacade.CreateAsync(Owner, _sessionManager.UserId ?? 9999);
 
         if (!response.Success)
         {

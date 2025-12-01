@@ -23,9 +23,9 @@ namespace FuerzaGServicial.Facades
             return await _apiClient.GetByIdAsync(id);
         }
 
-        public async Task<ApiResponse<int>> CreateAsync(OwnerModel owner)
+        public async Task<ApiResponse<int>> CreateAsync(OwnerModel owner, int userId)
         {
-            return await _apiClient.CreateAsync(owner);
+            return await _apiClient.CreateAsync(owner, userId);
         }
 
         public async Task<ApiResponse<bool>> UpdateAsync(OwnerModel owner, int userId)

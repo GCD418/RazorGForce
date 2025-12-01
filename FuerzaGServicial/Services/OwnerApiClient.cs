@@ -23,9 +23,15 @@ namespace FuerzaGServicial.Services
             return await _http.GetFromJsonAsync<OwnerModel>($"api/owner/{id}");
         }
 
-        public async Task<ApiResponse<int>> CreateAsync(OwnerModel owner)
+        public async Task<ApiResponse<int>> CreateAsync(OwnerModel owner, int userId)
         {
-            var response = await _http.PostAsJsonAsync("api/owner/create", owner);
+            // var response = await _http.PostAsJsonAsync("api/owner/create", owner);
+            
+            var request = new HttpRequestMessage(HttpMethod.Post, "api/owner/create");
+            request.Headers.Add("userId", userId.ToString());
+            request.Content = JsonContent.Create(owner);
+            
+            var response = await _http.SendAsync(request);
 
             if (response.IsSuccessStatusCode)
             {
@@ -38,23 +44,21 @@ namespace FuerzaGServicial.Services
                 };
             }
 
-            if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
-            {
-                var errorResponse = await response.Content.ReadFromJsonAsync<ValidationErrorResponse>();
+            if (response.StatusCode != System.Net.HttpStatusCode.BadRequest)
                 return new ApiResponse<int>
                 {
                     Success = false,
-                    Message = errorResponse?.Message ?? "Error de validación",
-                    Errors = errorResponse?.Errors ?? new List<string>()
+                    Message = "Error al crear el owner",
+                    Errors = new List<string> { response.ReasonPhrase ?? "Error desconocido" }
                 };
-            }
-
+            var errorResponse = await response.Content.ReadFromJsonAsync<ValidationErrorResponse>();
             return new ApiResponse<int>
             {
                 Success = false,
-                Message = "Error al crear el owner",
-                Errors = new List<string> { response.ReasonPhrase ?? "Error desconocido" }
+                Message = errorResponse?.Message ?? "Error de validación",
+                Errors = errorResponse?.Errors ?? new List<string>()
             };
+
         }
 
         public async Task<ApiResponse<bool>> UpdateAsync(OwnerModel owner, int userId)
