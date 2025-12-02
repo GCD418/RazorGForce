@@ -16,25 +16,28 @@
                 <i class="fas fa-plus-circle me-2"></i> Crear nuevo técnico
             </a>
         </div>
-
-        <table class="table table-striped align-middle">
-            <thead class="table-dark text-center">
+        
+        <div class="table-responsive shadow-sm rounded-3">
+            <table id="servicesTable" class="table align-middle text-center" data-datatable>
+                <thead class="table-dark">
                 <tr>
-                    <th style="width:10%;">#</th>
-                    <th style="width:25%;">Nombre Completo</th>
-                    <th style="width:15%;">Teléfono</th>
-                    <th style="width:30%;">Email</th>
-                    <th style="width:20%;">Acciones</th>
+                    <th style="width:5%; text-align:center">#</th>
+                    <th style="width:25%; text-align:center">Nombre Completo</th>
+                    <th style="width:10%; text-align:center">Teléfono</th>
+                    <th style="width:15%; text-align:center">Salario Base (Bs.)</th>
+                    <th style="width:25%; text-align:center">Email</th>
+                    <th style="width:20%; text-align:center">Acciones</th>
                 </tr>
-            </thead>
-            <tbody>
+                </thead>
+                <tbody>
                 @foreach (var t in Model.Technicians.OrderBy(x => x.FirstLastName + " " + x.SecondLastName + " " + x.Name).Select((item, index) => new { item, index = index + 1 }))
                 {
                     <tr>
                         <td class="text-center"><strong>@t.index</strong></td>
-                        <td>@t.item.FirstLastName @t.item.SecondLastName @t.item.Name</td>
+                        <td class="text-start">@t.item.FirstLastName @t.item.SecondLastName @t.item.Name</td>
                         <td class="text-center">@t.item.PhoneNumber</td>
-                        <td>@t.item.Email</td>
+                        <td class="text-end">@t.item.BaseSalary</td>
+                        <td class="text-start">@t.item.Email</td>
                         <td class="text-center">
                             <a asp-page="./Edit" asp-route-id="@Model.EncryptId(t.item.Id)" class="btn btn-sm btn-warning">
                                 <i class="bi bi-pencil"></i> Editar
@@ -47,8 +50,9 @@
                         </td>
                     </tr>
                 }
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
 
         @foreach (var t in Model.Technicians)
         {
@@ -88,3 +92,21 @@
         }
     </div>
 </section>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            if ($.fn.DataTable.isDataTable('#servicesTable')) {
+                $('#servicesTable').DataTable().destroy();
+            }
+            
+            DataTableHelper.init('#servicesTable', {
+                columnDefs: [
+                    { orderable: false, targets: 5 },
+                    { type: 'num', targets: 0 } 
+                ],
+                order: [[0, 'asc']]
+            });
+        });
+    </script>
+}
