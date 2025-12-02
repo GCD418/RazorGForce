@@ -62,7 +62,8 @@
             <!-- Email -->
             <div class="col-md-6">
                 <label asp-for="UserAccount.Email" class="form-label">Correo Electrónico *</label>
-                <input asp-for="UserAccount.Email" type="email" required maxlength="255" placeholder="ejemplo@correo.com" class="form-control" />
+                <input asp-for="UserAccount.Email" type="email" required maxlength="255" placeholder="ejemplo@correo.com" class="form-control" pattern="^[a-zA-Z0-9._]+@@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+                       $" />
                 <div class="invalid-feedback">Ingrese un correo electrónico válido.</div>
             </div>
 
@@ -132,47 +133,57 @@
             var docInput = $('#UserAccount_DocumentNumber')[0];
             var phoneInput = $('#UserAccount_PhoneNumber')[0];
             var usernameInput = $('#UserAccount_UserName')[0];
+            var emailInput = $('#UserAccount_Email')[0];
+            var complementoInput = $('#Form_Complement')[0];
 
-            // Solo letras, espacios, guiones y apóstrofos
+
             function letraPermitida(e) {
                 const allowed = /^[A-Za-zÁÉÍÓÚáéíóúÑñüÜ\s'-]$/;
-                const ch = String.fromCharCode(e.which);
-                if (!allowed.test(ch) && e.which !== 8 && e.which !== 0) e.preventDefault();
+                const ch = e.key; 
+                if (!allowed.test(ch) && ch !== "Backspace" && ch !== "Tab") e.preventDefault();
             }
-            [nombreInput, apellidoInput, segundoApellidoInput].forEach(el => el && el.addEventListener("keypress", letraPermitida));
+            [nombreInput, apellidoInput, segundoApellidoInput].forEach(el => el && el.addEventListener("keydown", letraPermitida));
 
-            // Solo números
-            [phoneInput, docInput].forEach(el => el && $(el).on('keypress', function(e){ if(e.which < 48 || e.which > 57) e.preventDefault(); }));
-            phoneInput.addEventListener('input', function(){ if(this.value.length > 8) this.value = this.value.slice(0,8); });
-            docInput.addEventListener('input', function(){ if(this.value.length > 9) this.value = this.value.slice(0,9); });
+            [phoneInput, docInput].forEach(el => el && $(el).on('input', function() {
+                this.value = this.value.replace(/[^0-9]/g,'');
+                if(this.id === 'UserAccount_PhoneNumber' && this.value.length > 8) this.value = this.value.slice(0,8);
+                if(this.id === 'UserAccount_DocumentNumber' && this.value.length > 9) this.value = this.value.slice(0,9);
+            }));
 
-            // Generar nombre de usuario automáticamente
+            complementoInput && complementoInput.addEventListener('input', function() {
+                this.value = this.value.replace(/[^1-9A-Z]/g,'');
+            });
+
+            emailInput && emailInput.addEventListener('input', function() {
+                this.value = this.value.replace(/[^a-zA-Z0-9._@@]/g,'');
+            });
+
+
             function generarUsername() {
                 const nombre = nombreInput.value.trim().toLowerCase() || "";
                 let apellido = apellidoInput.value.trim().toLowerCase() || "";
                 const doc = docInput.value.trim() || "";
-                apellido = apellido.replace(/\s+/g, '');
+                apellido = apellido.replace(/\s+/g,'');
                 usernameInput.value = (nombre && apellido && doc.length >= 3)
                     ? `${nombre.charAt(0)}.${apellido}${doc.slice(-3)}`
                     : "";
             }
-            [nombreInput, apellidoInput, docInput].forEach(el => el && el.addEventListener("input", generarUsername));
+            [nombreInput, apellidoInput, docInput].forEach(el => el && el.addEventListener('input', generarUsername));
 
-            // Validaciones dinámicas
             $('input, select').on('input', function () {
                 const field = $(this);
-                if (!field.prop('required') && field.val().trim() === '') {
+                if(!field.prop('required') && field.val().trim() === ''){
                     field.removeClass('is-valid is-invalid');
                     return;
                 }
-                if (this.checkValidity()) {
+                if(this.checkValidity()){
                     field.removeClass('is-invalid').addClass('is-valid');
                 } else {
                     field.removeClass('is-valid').addClass('is-invalid');
                 }
             });
 
-            // Submit con animación
+
             $(form).on('submit', function(e){
                 if(!form.checkValidity()){
                     e.preventDefault();
