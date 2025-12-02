@@ -23,12 +23,12 @@
             <table id="servicesTable" class="table align-middle text-center" data-datatable>
                 <thead class="table-dark">
                 <tr>
-                    <th style="width:5%;">#</th>
-                    <th style="width:20%;">Nombre</th>
-                    <th style="width:15%;">Tipo</th>
-                    <th style="width:10%;">Precio (Bs.)</th>
-                    <th style="width:30%;">Descripción</th>
-                    <th style="width:10%;">Acciones</th>
+                    <th style="width:5%; text-align:center">#</th>
+                    <th style="width:20%;text-align:center">Nombre</th>
+                    <th style="width:15%;text-align:center">Tipo</th>
+                    <th style="width:10%;text-align:center">Precio (Bs.)</th>
+                    <th style="width:30%;text-align:center">Descripción</th>
+                    <th style="width:10%;text-align:center">Acciones</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -36,7 +36,7 @@
                 {
                     <tr>
                         <td>@s.index</td>
-                        <td>@s.service.Name</td>
+                        <td class="text-start">@s.service.Name</td>
                         <td>@s.service.Type</td>
                         <td class="text-end">@(s.service.Price?.ToString("N2") ?? "-")</td>
                         <td class="text-start">@s.service.Description</td>
