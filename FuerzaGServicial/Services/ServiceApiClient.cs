@@ -59,8 +59,8 @@ namespace FuerzaGServicial.Services
 
         public async Task<ApiResponse<bool>> UpdateAsync(ServiceModel service, int userId)
         {
-            var request = new HttpRequestMessage(HttpMethod.Put, "api/service");
-            request.Headers.Add("userId", userId.ToString());
+            var request = new HttpRequestMessage(HttpMethod.Put, $"api/service/{service.Id}");
+            request.Headers.Add("User-Id", userId.ToString());
             request.Content = JsonContent.Create(service);
 
             var response = await _http.SendAsync(request);
@@ -78,13 +78,63 @@ namespace FuerzaGServicial.Services
 
             if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
             {
-                var errorResponse = await response.Content.ReadFromJsonAsync<ValidationErrorResponse>();
-                return new ApiResponse<bool>
+                var rawContent = await response.Content.ReadAsStringAsync();
+                
+                try
                 {
-                    Success = false,
-                    Message = errorResponse?.Message ?? "Error de validación",
-                    Errors = errorResponse?.Errors ?? new List<string>()
-                };
+                    using var doc = System.Text.Json.JsonDocument.Parse(rawContent);
+                    var root = doc.RootElement;
+                    
+                    var message = root.TryGetProperty("message", out var msgElement) 
+                        ? msgElement.GetString() 
+                        : "Error de validación";
+                    
+                    var errors = new List<string>();
+                    
+                    if (root.TryGetProperty("errors", out var errorsElement))
+                    {
+                        if (errorsElement.ValueKind == System.Text.Json.JsonValueKind.Array)
+                        {
+                            foreach (var error in errorsElement.EnumerateArray())
+                            {
+                                errors.Add(error.GetString() ?? "Error desconocido");
+                            }
+                        }
+                        else if (errorsElement.ValueKind == System.Text.Json.JsonValueKind.Object)
+                        {
+                            foreach (var prop in errorsElement.EnumerateObject())
+                            {
+                                if (prop.Value.ValueKind == System.Text.Json.JsonValueKind.Array)
+                                {
+                                    foreach (var error in prop.Value.EnumerateArray())
+                                    {
+                                        errors.Add($"{prop.Name}: {error.GetString()}");
+                                    }
+                                }
+                                else
+                                {
+                                    errors.Add($"{prop.Name}: {prop.Value.GetString()}");
+                                }
+                            }
+                        }
+                    }
+                    
+                    return new ApiResponse<bool>
+                    {
+                        Success = false,
+                        Message = message,
+                        Errors = errors.Count > 0 ? errors : new List<string> { message }
+                    };
+                }
+                catch (Exception ex)
+                {
+                    return new ApiResponse<bool>
+                    {
+                        Success = false,
+                        Message = "Error al procesar la respuesta del servidor",
+                        Errors = new List<string> { rawContent }
+                    };
+                }
             }
 
             return new ApiResponse<bool>
