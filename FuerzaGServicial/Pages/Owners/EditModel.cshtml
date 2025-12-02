@@ -16,35 +16,35 @@
 
             <div class="col-md-6">
                 <label asp-for="OwnerModel.Name" class="form-label">Nombre *</label>
-                <input asp-for="OwnerModel.Name" class="form-control" required minlength="3"
+                <input asp-for="OwnerModel.Name" class="form-control" required minlength="3" placeholder="Ingrese nombre"
                        maxlength="100" pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]+$" />
                 <span asp-validation-for="OwnerModel.Name" class="text-danger small"></span>
             </div>
 
             <div class="col-md-6">
                 <label asp-for="OwnerModel.FirstLastname" class="form-label">Apellido Paterno *</label>
-                <input asp-for="OwnerModel.FirstLastname" class="form-control" required minlength="2"
+                <input asp-for="OwnerModel.FirstLastname" class="form-control" required minlength="2" placeholder="Ingrese apellido paterno"
                        maxlength="100" pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]+$" />
                 <span asp-validation-for="OwnerModel.FirstLastname" class="text-danger small"></span>
             </div>
 
             <div class="col-md-6">
                 <label asp-for="OwnerModel.SecondLastname" class="form-label">Apellido Materno</label>
-                <input asp-for="OwnerModel.SecondLastname" class="form-control" minlength="2"
+                <input asp-for="OwnerModel.SecondLastname" class="form-control" minlength="2" placeholder="Ingrese apellido materno (opcional)"
                        maxlength="100" pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]*$" />
                 <span asp-validation-for="OwnerModel.SecondLastname" class="text-danger small"></span>
             </div>
 
             <div class="col-md-6">
                 <label asp-for="OwnerModel.PhoneNumber" class="form-label">Teléfono *</label>
-                <input asp-for="OwnerModel.PhoneNumber" class="form-control"
+                <input asp-for="OwnerModel.PhoneNumber" class="form-control" placeholder="Ej: 76543210"
                        pattern="[0-9]{8}" required />
                 <span asp-validation-for="OwnerModel.PhoneNumber" class="text-danger small"></span>
             </div>
 
             <div class="col-md-6">
                 <label asp-for="OwnerModel.Email" class="form-label">Correo *</label>
-                <input asp-for="OwnerModel.Email" class="form-control"
+                <input asp-for="OwnerModel.Email" class="form-control" placeholder="ejemplo@correo.com"
                        type="email" required maxlength="255" />
                 <span asp-validation-for="OwnerModel.Email" class="text-danger small"></span>
             </div>
@@ -54,15 +54,15 @@
 
                     <div class="col-md-8">
                         <label asp-for="OwnerModel.DocumentNumber" class="form-label">CI *</label>
-                        <input asp-for="OwnerModel.DocumentNumber" class="form-control"
+                        <input asp-for="OwnerModel.DocumentNumber" class="form-control" placeholder="Ej: 1234567"
                                pattern="[0-9]{6,10}" required minlength="6" maxlength="10" />
                         <span asp-validation-for="OwnerModel.DocumentNumber"
                               class="text-danger small"></span>
                     </div>
 
                     <div class="col-md-4">
-                        <label asp-for="OwnerModel.DocumentExtension" class="form-label">Comp.</label>
-                        <input asp-for="OwnerModel.DocumentExtension" class="form-control"
+                        <label asp-for="OwnerModel.DocumentExtension" class="form-label">Complemento</label>
+                        <input asp-for="OwnerModel.DocumentExtension" class="form-control" placeholder="Ej: 1A"
                                pattern="^([1-9][A-Z])?$" maxlength="2" minlength="2" />
                         <span asp-validation-for="OwnerModel.DocumentExtension"
                               class="text-danger small"></span>
@@ -73,7 +73,7 @@
 
             <div class="col-12">
                 <label asp-for="OwnerModel.Address" class="form-label">Dirección *</label>
-                <textarea asp-for="OwnerModel.Address" class="form-control" minlength="5" maxlength="100"
+                <textarea asp-for="OwnerModel.Address" class="form-control" minlength="5" maxlength="100" placeholder="Ingrese la dirección completa"
                           required></textarea>
                 <span asp-validation-for="OwnerModel.Address" class="text-danger small"></span>
             </div>
