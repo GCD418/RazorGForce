@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 namespace FuerzaGServicial.Pages.UserAccounts;
 
 [Authorize]
-public class ChangePasswordModel : PageModel
+public class ForceChangePasswordModel : PageModel
 {
     private readonly AuthFacade _authFacade;
 
@@ -16,10 +16,9 @@ public class ChangePasswordModel : PageModel
     public InputModel Input { get; set; } = new();
 
     public string? ErrorMessage { get; set; }
-    public string? SuccessMessage { get; set; }
     public List<string> ValidationErrors { get; set; } = new();
 
-    public ChangePasswordModel(AuthFacade authFacade)
+    public ForceChangePasswordModel(AuthFacade authFacade)
     {
         _authFacade = authFacade;
     }
@@ -44,7 +43,7 @@ public class ChangePasswordModel : PageModel
 
         var request = new ChangePasswordRequest
         {
-            CurrentPassword = Input.CurrentPassword,
+            CurrentPassword = null, 
             NewPassword = Input.NewPassword,
             ConfirmPassword = Input.ConfirmPassword
         };
@@ -58,20 +57,14 @@ public class ChangePasswordModel : PageModel
             return Page();
         }
 
-        SuccessMessage = "Contraseña cambiada exitosamente";
-        ModelState.Clear();
-        Input = new InputModel();
-        
-        return Page();
+        await _authFacade.LogoutAsync();
+
+        TempData["SuccessMessage"] = "Contraseña cambiada exitosamente. Por favor, inicia sesión con tu nueva contraseña.";
+        return RedirectToPage("/Login");
     }
 
     public class InputModel
     {
-        [Display(Name = "Contraseña Actual")]
-        [Required(ErrorMessage = "La contraseña actual es obligatoria")]
-        [DataType(DataType.Password)]
-        public string CurrentPassword { get; set; } = string.Empty;
-
         [Display(Name = "Nueva Contraseña")]
         [Required(ErrorMessage = "La nueva contraseña es obligatoria")]
         [DataType(DataType.Password)]
@@ -85,4 +78,3 @@ public class ChangePasswordModel : PageModel
         public string ConfirmPassword { get; set; } = string.Empty;
     }
 }
-
