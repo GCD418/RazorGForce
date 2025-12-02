@@ -53,7 +53,7 @@ public class Edit : PageModel
 
         if (!ModelState.IsValid)
             return Page();
-// ✅ 1. Validar datos básicos
+
         if (string.IsNullOrWhiteSpace(Service.Name))
             ModelState.AddModelError("Service.Name", "El nombre es requerido");
 
@@ -68,28 +68,22 @@ public class Edit : PageModel
 
         if (!ModelState.IsValid)
             return Page();
-
-        // ✅ 2. Obtener el servicio existente
+        
         var existingService = await _serviceFacade.GetByIdAsync(Service.Id);
         
-        // ✅ 3. Verificar que EXISTA (nota: es == null, no != null)
         if (existingService == null)
         {
             ModelState.AddModelError(string.Empty, "El servicio no existe");
             return Page();
         }
-
-        // ✅ 4. Actualizar solo los campos editables
+        
         existingService.Name = Service.Name.Trim();
         existingService.Type = Service.Type.Trim();
         existingService.Description = Service.Description.Trim();
         existingService.Price = Service.Price;
-        // Los demás campos (CreatedByUserId, CreatedAt, etc.) se mantienen del original
-
-        // ✅ 5. Enviar la actualización a la API
+        
         var response = await _serviceFacade.UpdateAsync(existingService, _sessionManager.UserId ?? 9999);
-
-        // ✅ 6. Manejar la respuesta
+        
         if (!response.Success)
         {
             ValidationErrors = response.Errors;
