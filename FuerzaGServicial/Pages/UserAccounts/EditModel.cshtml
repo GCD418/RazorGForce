@@ -68,7 +68,7 @@
             <!-- Email -->
             <div class="col-md-6">
                 <label asp-for="UserAccount.Email" class="form-label">Correo Electrónico *</label>
-                <input asp-for="UserAccount.Email" type="email" required maxlength="255" placeholder="ejemplo@correo.com" class="form-control" />
+                <input asp-for="UserAccount.Email" type="email" required maxlength="255" placeholder="ejemplo@correo.com" class="form-control" pattern="^[a-zA-Z0-9._]+@@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$" />
                 <div class="invalid-feedback">Ingrese un correo electrónico válido.</div>
             </div>
 
@@ -131,28 +131,36 @@
         $(document).ready(function () {
             var form = $('#userAccountForm')[0];
 
-            // Función para permitir solo letras en ciertos campos
             function letraPermitida(e) {
                 const allowed = /^[A-Za-zÁÉÍÓÚáéíóúÑñüÜ\s'-]$/;
-                const ch = String.fromCharCode(e.which);
-                if (!allowed.test(ch) && e.which !== 8 && e.which !== 0) e.preventDefault();
+                const ch = e.key; 
+                if (!allowed.test(ch) && ch !== "Backspace" && ch !== "Tab") e.preventDefault();
             }
-            $('#UserAccount_Name, #UserAccount_FirstLastName, #UserAccount_SecondLastName').on('keypress', letraPermitida);
 
-            // Solo números para teléfono y documento
-            $('#UserAccount_PhoneNumber, #UserAccount_DocumentNumber').on('keypress', function (e) {
-                if (e.which < 48 || e.which > 57) e.preventDefault();
+            $('#UserAccount_Name, #UserAccount_FirstLastName, #UserAccount_SecondLastName')
+                .on('keydown', letraPermitida);
+
+            $('#UserAccount_PhoneNumber, #UserAccount_DocumentNumber')
+                .on('input', function () {
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                    if (this.id === 'UserAccount_PhoneNumber' && this.value.length > 8)
+                        this.value = this.value.slice(0, 8);
+                    if (this.id === 'UserAccount_DocumentNumber' && this.value.length > 9)
+                        this.value = this.value.slice(0, 9);
+                });
+
+            $('#Form_Complement').on('input', function () {
+                this.value = this.value.replace(/[^1-9A-Z]/g, '');
             });
 
-            // Limitar longitud al escribir
-            $('#UserAccount_PhoneNumber').on('input', function () { if (this.value.length > 8) this.value = this.value.slice(0, 8); });
-            $('#UserAccount_DocumentNumber').on('input', function () { if (this.value.length > 9) this.value = this.value.slice(0, 9); });
+            $('#UserAccount_Email').on('input', function () {
+                this.value = this.value.replace(/[^a-zA-Z0-9._@@]/g, '');
+            });
 
-            // Validación visual con Bootstrap
+
             $('input, select').on('input', function () {
                 const field = $(this);
 
-                // Si es opcional y vacío, limpiamos clases
                 if (!field.prop('required') && field.val().trim() === '') {
                     field.removeClass('is-valid is-invalid');
                     return;
@@ -164,6 +172,7 @@
                     field.removeClass('is-valid').addClass('is-invalid');
                 }
             });
+
 
             $(form).on('submit', function(e){
                 if(!form.checkValidity()){
