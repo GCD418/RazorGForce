@@ -23,9 +23,14 @@ namespace FuerzaGServicial.Services
             return await _http.GetFromJsonAsync<ServiceModel>($"api/service/{id}");
         }
 
-        public async Task<ApiResponse<int>> CreateAsync(ServiceModel service)
+        public async Task<ApiResponse<int>> CreateAsync(ServiceModel service, int userId)
         {
-            var response = await _http.PostAsJsonAsync("api/service/create", service);
+            // var response = await _http.PostAsJsonAsync("api/service/create", service);
+            var request = new HttpRequestMessage(HttpMethod.Post, "api/service/insert");
+            request.Headers.Add("User-Id", userId.ToString());
+            request.Content = JsonContent.Create(service);
+
+            var response = await _http.SendAsync(request);
 
             if (response.IsSuccessStatusCode)
             {
