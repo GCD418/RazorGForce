@@ -121,4 +121,42 @@ public class UserAccountApiClient
         var response = await _http.SendAsync(request);
         return response.IsSuccessStatusCode;
     }
+
+    public async Task<ApiResponse<bool>> ChangePasswordAsync(ChangePasswordRequest changePasswordRequest, int userId)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Post, "api/useraccounts/change-password");
+        request.Headers.Add("userId", userId.ToString());
+        request.Content = JsonContent.Create(changePasswordRequest);
+        
+        var response = await _http.SendAsync(request);
+        
+        if (response.IsSuccessStatusCode)
+        {
+            var successResponse = await response.Content.ReadFromJsonAsync<SuccessResponse>();
+            return new ApiResponse<bool>
+            {
+                Success = true,
+                Data = true,
+                Message = successResponse?.Message ?? "Contraseña cambiada exitosamente"
+            };
+        }
+        
+        if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+        {
+            var errorResponse = await response.Content.ReadFromJsonAsync<ValidationErrorResponse>();
+            return new ApiResponse<bool>
+            {
+                Success = false,
+                Message = errorResponse?.Message ?? "Error de validación",
+                Errors = errorResponse?.Errors ?? new List<string>()
+            };
+        }
+        
+        return new ApiResponse<bool>
+        {
+            Success = false,
+            Message = "Error al cambiar la contraseña",
+            Errors = new List<string> { response.ReasonPhrase ?? "Error desconocido" }
+        };
+    }
 }

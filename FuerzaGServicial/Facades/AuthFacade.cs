@@ -20,7 +20,7 @@ public class AuthFacade
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task<bool> LoginAsync(string username, string password)
+    public async Task<LoginResponse?> LoginAsync(string username, string password)
     {
         var loginRequest = new LoginRequest
         {
@@ -32,7 +32,7 @@ public class AuthFacade
 
         if (response == null || string.IsNullOrEmpty(response.Token))
         {
-            return false;
+            return null;
         }
 
         var cookieOptions = new CookieOptions
@@ -63,7 +63,7 @@ public class AuthFacade
             ExpiresUtc = DateTimeOffset.UtcNow.AddSeconds(response.ExpiresIn)
         });
 
-        return true;
+        return response;
     }
 
     public async Task LogoutAsync()
@@ -148,5 +148,10 @@ public class AuthFacade
     public async Task<ApiResponse<int>> CreateUserAccountAsync(UserAccount userAccount, int userId)
     {
         return await _apiClient.CreateAsync(userAccount, userId);
+    }
+
+    public async Task<ApiResponse<bool>> ChangePasswordAsync(ChangePasswordRequest changePasswordRequest, int userId)
+    {
+        return await _apiClient.ChangePasswordAsync(changePasswordRequest, userId);
     }
 }

@@ -32,13 +32,18 @@ public class Login : PageModel
             return Page();
         }
 
-        bool isSuccess = await _authFacade.LoginAsync(Input.Username, Input.Password);
+        var loginResponse = await _authFacade.LoginAsync(Input.Username, Input.Password);
         
-        if (!isSuccess)
+        if (loginResponse == null)
         {
             var ErrorMessage = "Usuario o contraseña incorrectos.";
             ModelState.AddModelError(string.Empty, ErrorMessage);
             return Page();
+        }
+
+        if (loginResponse.IsFirstLogin)
+        {
+            return RedirectToPage("/UserAccounts/ForceChangePassword");
         }
 
         return RedirectToPage("/Index");
