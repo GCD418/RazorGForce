@@ -17,28 +17,43 @@
             <div class="col-md-6">
                 <label asp-for="OwnerModel.Name" class="form-label">Nombre *</label>
                 <input asp-for="OwnerModel.Name" class="form-control" required minlength="3"
-                       maxlength="100" pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]+$" />
+                       maxlength="100" pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]+$"
+                       title="Solo se permiten letras y espacios." />
+                <div class="invalid-feedback">
+                    El nombre debe tener al menos 3 caracteres y solo letras.
+                </div>
                 <span asp-validation-for="OwnerModel.Name" class="text-danger small"></span>
             </div>
 
             <div class="col-md-6">
                 <label asp-for="OwnerModel.FirstLastname" class="form-label">Apellido Paterno *</label>
                 <input asp-for="OwnerModel.FirstLastname" class="form-control" required minlength="2"
-                       maxlength="100" pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]+$" />
+                       maxlength="100" pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]+$"
+                       title="Solo se permiten letras y espacios." />
+                <div class="invalid-feedback">
+                    El apellido paterno debe tener al menos 2 caracteres y solo letras.
+                </div>
                 <span asp-validation-for="OwnerModel.FirstLastname" class="text-danger small"></span>
             </div>
 
             <div class="col-md-6">
                 <label asp-for="OwnerModel.SecondLastname" class="form-label">Apellido Materno</label>
                 <input asp-for="OwnerModel.SecondLastname" class="form-control" minlength="2"
-                       maxlength="100" pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]*$" />
+                       maxlength="100" pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]*$"
+                       title="Solo se permiten letras y espacios si se llena." />
+                <div class="invalid-feedback">
+                    El apellido materno debe tener al menos 2 caracteres y solo letras.
+                </div>
                 <span asp-validation-for="OwnerModel.SecondLastname" class="text-danger small"></span>
             </div>
 
             <div class="col-md-6">
                 <label asp-for="OwnerModel.PhoneNumber" class="form-label">Teléfono *</label>
-                <input asp-for="OwnerModel.PhoneNumber" class="form-control"
+                <input asp-for="OwnerModel.PhoneNumber" class="form-control" type="tel"
                        pattern="[0-9]{8}" required />
+                <div class="invalid-feedback">
+                    El teléfono debe tener exactamente 8 dígitos.
+                </div>
                 <span asp-validation-for="OwnerModel.PhoneNumber" class="text-danger small"></span>
             </div>
 
@@ -46,6 +61,9 @@
                 <label asp-for="OwnerModel.Email" class="form-label">Correo *</label>
                 <input asp-for="OwnerModel.Email" class="form-control"
                        type="email" required maxlength="255" />
+                <div class="invalid-feedback">
+                    Ingrese un correo electrónico válido.
+                </div>
                 <span asp-validation-for="OwnerModel.Email" class="text-danger small"></span>
             </div>
 
@@ -58,14 +76,21 @@
                                pattern="[0-9]{6,10}" required minlength="6" maxlength="10" />
                         <span asp-validation-for="OwnerModel.DocumentNumber"
                               class="text-danger small"></span>
+                        <div class="invalid-feedback">
+                            El CI debe contener entre 6 y 10 dígitos.
+                        </div>
                     </div>
 
                     <div class="col-md-4">
                         <label asp-for="OwnerModel.DocumentExtension" class="form-label">Comp.</label>
                         <input asp-for="OwnerModel.DocumentExtension" class="form-control"
-                               pattern="^([1-9][A-Z])?$" maxlength="2" minlength="2" />
+                               pattern="^([1-9][A-Z])?$" maxlength="2" minlength="2"
+                               title="Formato: dígito 1-9 seguido de letra mayúscula (ej. 1A)" />
                         <span asp-validation-for="OwnerModel.DocumentExtension"
                               class="text-danger small"></span>
+                        <div class="invalid-feedback">
+                            Formato: dígito 1-9 seguido de letra mayúscula.
+                        </div>
                     </div>
 
                 </div>
@@ -75,6 +100,9 @@
                 <label asp-for="OwnerModel.Address" class="form-label">Dirección *</label>
                 <textarea asp-for="OwnerModel.Address" class="form-control" minlength="5" maxlength="100"
                           required></textarea>
+                <div class="invalid-feedback">
+                    La dirección debe tener al menos 5 caracteres y no más de 100.
+                </div>
                 <span asp-validation-for="OwnerModel.Address" class="text-danger small"></span>
             </div>
 
@@ -87,6 +115,10 @@
             <a asp-page="/Owners/OwnerPage" class="btn btn-outline-secondary">Cancelar</a>
         </div>
 
+        <div class="mt-3">
+            <small class="text-muted">* Campos obligatorios</small>
+        </div>
+
     </form>
 </div>
 
@@ -94,55 +126,50 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            const form = document.getElementById('ownerForm');
-            const btnUpdate = $('#btnUpdate');
+            const form = $('#ownerForm')[0];
 
-            $('input[type="tel"], input[asp-for="Owner.DocumentNumber"]').on('keypress', function (e) {
+            // Validaciones de letras
+            function letraPermitida(e) {
+                const allowed = /^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]$/;
+                const ch = String.fromCharCode(e.which);
+                if (!allowed.test(ch) && e.which !== 8 && e.which !== 0) e.preventDefault();
+            }
+            ['#OwnerModel_Name', '#OwnerModel_FirstLastname', '#OwnerModel_SecondLastname'].forEach(id => {
+                $(id).on('keypress', letraPermitida);
+            });
+
+            // Teléfono y CI solo números
+            $('#OwnerModel_PhoneNumber, #OwnerModel_DocumentNumber').on('keypress', function (e) {
                 if (e.which < 48 || e.which > 57) e.preventDefault();
             });
 
-            $('input[type="tel"]').on('input', function () {
+            $('#OwnerModel_PhoneNumber').on('input', function () {
                 if (this.value.length > 8) this.value = this.value.slice(0, 8);
             });
-
-            $('input[asp-for="Owner.DocumentNumber"]').on('input', function () {
-                if (this.value.length > 9) this.value = this.value.slice(0, 9);
+            $('#OwnerModel_DocumentNumber').on('input', function () {
+                if (this.value.length > 10) this.value = this.value.slice(0, 10);
             });
 
-            function letraPermitida(e) {
-                const allowed = /^[A-Za-zÁÉÍÓÚáéíóúÑñüÜ\s]$/;
-                const ch = String.fromCharCode(e.which);
-                if (!allowed.test(ch) && e.which !== 8 && e.which !== 0) {
-                    e.preventDefault();
-                }
-            }
-
-            [ "Owner_Name", "Owner_FirstLastname", "Owner_SecondLastname" ].forEach(id => {
-                const el = document.getElementById(id);
-                el && el.addEventListener("keypress", letraPermitida);
-            });
-
-            $('#ownerForm input, #ownerForm textarea').on('input', function () {
+            // Validación en tiempo real
+            $('input, textarea').on('input', function () {
                 if (this.checkValidity()) {
-                    $(this).removeClass('is-invalid');
+                    $(this).removeClass('is-invalid').addClass('is-valid');
                 } else {
-                    $(this).addClass('is-invalid');
+                    $(this).removeClass('is-valid').addClass('is-invalid');
                 }
             });
 
-            btnUpdate.on('click', function (e) {
-                e.preventDefault();
-                let formValid = form.checkValidity();
-                if (formValid) {
-                    btnUpdate.prop('disabled', true)
-                             .html('<i class="fas fa-spinner fa-spin"></i> Actualizando...');
-                    form.submit();
-                } else {
-                    $(form).addClass('was-validated');
-                    $('#ownerForm input, #ownerForm textarea').each(function () {
-                        if (!this.checkValidity()) $(this).addClass('is-invalid');
-                    });
+            // Submit con validación
+            $('#ownerForm').on('submit', function(e){
+                if(!form.checkValidity()){
+                    e.preventDefault();
+                    form.classList.add('was-validated');
+                    return;
                 }
+
+                const btn = $('#btnUpdate');
+                btn.prop('disabled', true);
+                btn.html('<i class="fas fa-spinner fa-spin"></i> Actualizando...');
             });
         });
     </script>
