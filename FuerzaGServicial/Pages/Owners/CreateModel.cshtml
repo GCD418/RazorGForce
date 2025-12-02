@@ -14,7 +14,7 @@
             <div class="col-md-6">
                 <label asp-for="Owner.Name" class="form-label">Nombre *</label>
                 <input asp-for="Owner.Name" class="form-control" required minlength="3" maxlength="100"
-                       pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]+$"
+                       pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]+$" placeholder="Ingrese nombre"
                        title="Solo se permiten letras y espacios." />
                 <div class="invalid-feedback">
                     El nombre debe tener al menos 3 caracteres y solo letras.
@@ -25,7 +25,7 @@
             <div class="col-md-6">
                 <label asp-for="Owner.FirstLastname" class="form-label">Apellido Paterno *</label>
                 <input asp-for="Owner.FirstLastname" class="form-control" required minlength="2" maxlength="100"
-                       pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]+$"
+                       pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]+$" placeholder="Ingrese apellido paterno"
                        title="Solo se permiten letras y espacios." />
                 <div class="invalid-feedback">
                     El apellido paterno debe tener al menos 2 caracteres y solo letras.
@@ -36,7 +36,7 @@
             <div class="col-md-6">
                 <label asp-for="Owner.SecondLastname" class="form-label">Apellido Materno</label>
                 <input asp-for="Owner.SecondLastname" class="form-control" minlength="2" maxlength="100"
-                       pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]*$"
+                       pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]*$" placeholder="Ingrese apellido materno (opcional)"
                        title="Solo se permiten letras y espacios si se llena." />
                 <div class="invalid-feedback">
                     El apellido materno debe tener al menos 2 caracteres y solo letras.
@@ -46,7 +46,7 @@
 
             <div class="col-md-6">
                 <label asp-for="Owner.PhoneNumber" class="form-label">Teléfono *</label>
-                <input asp-for="Owner.PhoneNumber" class="form-control" type="tel"
+                <input asp-for="Owner.PhoneNumber" class="form-control" type="tel" placeholder="Ej: 76543210"
                        pattern="[0-9]{8}" required />
                 <div class="invalid-feedback">
                     El teléfono debe tener exactamente 8 dígitos.
@@ -55,8 +55,8 @@
             </div>
 
             <div class="col-md-6">
-                <label asp-for="Owner.Email" class="form-label">Correo *</label>
-                <input asp-for="Owner.Email" class="form-control" type="email" required maxlength="255" />
+                <label asp-for="Owner.Email" class="form-label">Correo Electrónico*</label>
+                <input asp-for="Owner.Email" class="form-control" type="email" placeholder="ejemplo@correo.com" required maxlength="255" />
                 <div class="invalid-feedback">
                     Ingrese un correo electrónico válido.
                 </div>
@@ -68,7 +68,7 @@
 
                     <div class="col-md-8">
                         <label asp-for="Owner.DocumentNumber" class="form-label">CI *</label>
-                        <input asp-for="Owner.DocumentNumber" class="form-control"
+                        <input asp-for="Owner.DocumentNumber" class="form-control"  placeholder="Ej: 1234567"
                                minlength="6" maxlength="10" pattern="[0-9]{6,10}" required />
                         <span asp-validation-for="Owner.DocumentNumber" class="text-danger small"></span>
                         <div class="invalid-feedback">
@@ -77,8 +77,8 @@
                     </div>
 
                     <div class="col-md-4">
-                        <label asp-for="Owner.DocumentExtension" class="form-label">Comp.</label>
-                        <input asp-for="Owner.DocumentExtension" class="form-control"
+                        <label asp-for="Owner.DocumentExtension" class="form-label">Complemento</label>
+                        <input asp-for="Owner.DocumentExtension" class="form-control" placeholder="Ej: 1A"
                                maxlength="2" minlength="2" pattern="^([1-9][A-Z])?$"
                                title="Formato: dígito 1-9 seguido de letra mayúscula (ej. 1A)" />
                         <span asp-validation-for="Owner.DocumentExtension" class="text-danger small"></span>
@@ -92,7 +92,7 @@
 
             <div class="col-12">
                 <label asp-for="Owner.Address" class="form-label">Dirección *</label>
-                <textarea asp-for="Owner.Address" class="form-control" required minlength="5" maxlength="100"></textarea>
+                <textarea asp-for="Owner.Address" class="form-control" placeholder="Ingrese la dirección completa" required minlength="5" maxlength="100"></textarea>
                 <div class="invalid-feedback">
                     La dirección debe tener al menos 5 caracteres y no más de 100.
                 </div>
