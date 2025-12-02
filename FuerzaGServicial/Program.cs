@@ -3,11 +3,9 @@ using FuerzaGServicial.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Agregar Razor Pages
 builder.Services.AddRazorPages();
 builder.Services.AddHttpContextAccessor();
 
-// Configurar autenticación basada en cookies (para Razor Pages)
 builder.Services.AddAuthentication("CookieAuth")
     .AddCookie("CookieAuth", options =>
     {
@@ -26,7 +24,6 @@ var userAccountApiUrl = builder.Configuration["ApiSettings:UserAccountMicroservi
 var technicianApiUrl = builder.Configuration["ApiSettings:TechnicianMicroserviceUrl"];
 var ownerApiUrl = builder.Configuration["ApiSettings:OwnerMicroserviceUrl"];
 
-// Registrar HttpClients para los microservicios
 builder.Services.AddTransient<JwtHttpMessageHandler>();
 
 // ServiceApiClient
