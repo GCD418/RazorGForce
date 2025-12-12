@@ -134,23 +134,32 @@
                 const ch = String.fromCharCode(e.which);
                 if (!allowed.test(ch) && e.which !== 8 && e.which !== 0) e.preventDefault();
             }
+
+            // Nombres y apellidos: validación + mayúsculas automáticas
             ['#OwnerModel_Name', '#OwnerModel_FirstLastname', '#OwnerModel_SecondLastname'].forEach(id => {
                 $(id).on('keypress', letraPermitida);
+                $(id).on('input', function(){ this.value = this.value.toUpperCase(); });
             });
 
-            // Teléfono y CI solo números
+            // Teléfono y CI: solo números y límites de longitud
             $('#OwnerModel_PhoneNumber, #OwnerModel_DocumentNumber').on('keypress', function (e) {
                 if (e.which < 48 || e.which > 57) e.preventDefault();
             });
 
             $('#OwnerModel_PhoneNumber').on('input', function () {
-                if (this.value.length > 8) this.value = this.value.slice(0, 8);
-            });
-            $('#OwnerModel_DocumentNumber').on('input', function () {
-                if (this.value.length > 10) this.value = this.value.slice(0, 10);
+                this.value = this.value.replace(/\D/g, '').slice(0, 8);
             });
 
-            // Validación en tiempo real
+            $('#OwnerModel_DocumentNumber').on('input', function () {
+                this.value = this.value.replace(/\D/g, '').slice(0, 10);
+            });
+
+            // Complemento: siempre mayúsculas
+            $('#OwnerModel_DocumentExtension').on('input', function(){
+                this.value = this.value.toUpperCase();
+            });
+
+            // Validación en tiempo real para todos los inputs y textarea
             $('input, textarea').on('input', function () {
                 if (this.checkValidity()) {
                     $(this).removeClass('is-invalid').addClass('is-valid');

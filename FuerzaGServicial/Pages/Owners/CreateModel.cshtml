@@ -46,7 +46,7 @@
 
             <div class="col-md-6">
                 <label asp-for="Owner.PhoneNumber" class="form-label">Teléfono *</label>
-                <input asp-for="Owner.PhoneNumber" class="form-control" type="tel" placeholder="Ej: 76543210"
+                <input asp-for="Owner.PhoneNumber" class="form-control" type="tel" value="" placeholder="Ej: 76543210"
                        pattern="[0-9]{8}" required />
                 <div class="invalid-feedback">
                     El teléfono debe tener exactamente 8 dígitos.
@@ -123,40 +123,63 @@
         $(document).ready(function () {
             const form = $('#ownerForm')[0];
 
-            // Validaciones de letras
-            function letraPermitida(e) {
-                const allowed = /^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]$/;
+            // Validación de letras y caracteres permitidos
+            function letraPermitida(e, isAddress = false) {
+                const allowedLetters = /^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]$/;
+                const allowedAddress = /^[A-Za-zÁÉÍÓÚáéíóúÑñÜü0-9\s,./\-#()]*$/;
                 const ch = String.fromCharCode(e.which);
-                if (!allowed.test(ch) && e.which !== 8 && e.which !== 0) e.preventDefault();
+
+                if (isAddress) {
+                    if (!allowedAddress.test(ch) && e.which !== 8 && e.which !== 0) e.preventDefault();
+                } else {
+                    if (!allowedLetters.test(ch) && e.which !== 8 && e.which !== 0) e.preventDefault();
+                }
             }
+
+            // Nombre y apellidos (validación + mayúsculas)
             ['#Owner_Name', '#Owner_FirstLastname', '#Owner_SecondLastname'].forEach(id => {
-                $(id).on('keypress', letraPermitida);
+                $(id).on('keypress', function(e){ letraPermitida(e); });
+                $(id).on('input', function(){ this.value = this.value.toUpperCase(); });
             });
 
-            // Teléfono y CI solo números
+            // Dirección (sin mayúsculas automáticas)
+            $('#Owner_Address').on('keypress', function(e){ letraPermitida(e, true); });
+
+            // Complemento (mayúsculas siempre)
+            $('#Owner_DocumentExtension').on('input', function(){
+                this.value = this.value.toUpperCase();
+            });
+
+            // Teléfono y CI: solo números
             $('#Owner_PhoneNumber, #Owner_DocumentNumber').on('keypress', function (e) {
                 if (e.which < 48 || e.which > 57) e.preventDefault();
             });
 
+            // Teléfono (8 exactos)
             $('#Owner_PhoneNumber').on('input', function () {
+                this.value = this.value.replace(/\D/g, '');
                 if (this.value.length > 8) this.value = this.value.slice(0, 8);
             });
+
+            // CI (6 a 10 números)
             $('#Owner_DocumentNumber').on('input', function () {
+                this.value = this.value.replace(/\D/g, '');
                 if (this.value.length > 10) this.value = this.value.slice(0, 10);
             });
 
             // Validación en tiempo real
             $('input, textarea').on('input', function () {
+                const field = $(this);
                 if (this.checkValidity()) {
-                    $(this).removeClass('is-invalid').addClass('is-valid');
+                    field.removeClass('is-invalid').addClass('is-valid');
                 } else {
-                    $(this).removeClass('is-valid').addClass('is-invalid');
+                    field.removeClass('is-valid').addClass('is-invalid');
                 }
             });
 
-            // Submit con validación
-            $('#ownerForm').on('submit', function(e){
-                if(!form.checkValidity()){
+            // Submit con animación y validación final
+            $('#ownerForm').on('submit', function (e) {
+                if (!form.checkValidity()) {
                     e.preventDefault();
                     form.classList.add('was-validated');
                     return;

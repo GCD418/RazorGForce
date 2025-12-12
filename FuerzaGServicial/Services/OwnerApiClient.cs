@@ -25,12 +25,23 @@ namespace FuerzaGServicial.Services
 
         public async Task<ApiResponse<int>> CreateAsync(OwnerModel owner, int userId)
         {
-            // var response = await _http.PostAsJsonAsync("api/owner/create", owner);
-            
+            var ownerToSend = new OwnerModel
+            {
+                Name = owner.Name,
+                FirstLastname = owner.FirstLastname,
+                SecondLastname = owner.SecondLastname,
+                PhoneNumber = int.TryParse(owner.PhoneNumber.ToString(), out var num) ? num : 0,
+                Email = owner.Email,
+                DocumentNumber = owner.DocumentNumber,
+                DocumentExtension = owner.DocumentExtension,
+                Address = owner.Address,
+                IsActive = owner.IsActive
+            };
+
             var request = new HttpRequestMessage(HttpMethod.Post, "api/owner/create");
             request.Headers.Add("userId", userId.ToString());
-            request.Content = JsonContent.Create(owner);
-            
+            request.Content = JsonContent.Create(ownerToSend); // ahora PhoneNumber es int seguro
+
             var response = await _http.SendAsync(request);
 
             if (response.IsSuccessStatusCode)
@@ -51,6 +62,7 @@ namespace FuerzaGServicial.Services
                     Message = "Error al crear el owner",
                     Errors = new List<string> { response.ReasonPhrase ?? "Error desconocido" }
                 };
+
             var errorResponse = await response.Content.ReadFromJsonAsync<ValidationErrorResponse>();
             return new ApiResponse<int>
             {
@@ -58,14 +70,27 @@ namespace FuerzaGServicial.Services
                 Message = errorResponse?.Message ?? "Error de validación",
                 Errors = errorResponse?.Errors ?? new List<string>()
             };
-
         }
 
         public async Task<ApiResponse<bool>> UpdateAsync(OwnerModel owner, int userId)
         {
+            var ownerToSend = new OwnerModel
+            {
+                Id = owner.Id,
+                Name = owner.Name,
+                FirstLastname = owner.FirstLastname,
+                SecondLastname = owner.SecondLastname,
+                PhoneNumber = int.TryParse(owner.PhoneNumber.ToString(), out var num) ? num : 0,
+                Email = owner.Email,
+                DocumentNumber = owner.DocumentNumber,
+                DocumentExtension = owner.DocumentExtension,
+                Address = owner.Address,
+                IsActive = owner.IsActive
+            };
+
             var request = new HttpRequestMessage(HttpMethod.Put, "api/owner");
             request.Headers.Add("userId", userId.ToString());
-            request.Content = JsonContent.Create(owner);
+            request.Content = JsonContent.Create(ownerToSend); // PhoneNumber es int seguro
 
             var response = await _http.SendAsync(request);
 
