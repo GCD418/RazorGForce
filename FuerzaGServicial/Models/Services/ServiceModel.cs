@@ -21,5 +21,6 @@
         public int? ModifiedByUserId { get; set; }
 
         public int? CreatedByUserId { get; set; }
+        public decimal AccumulatedRevenue { get; set; } = 0.00m;
     }
 }
