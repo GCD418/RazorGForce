@@ -56,7 +56,7 @@
             <div class="col-md-6">
                 <label asp-for="Technician.PhoneNumber" class="form-label">Teléfono *</label>
                 <input asp-for="Technician.PhoneNumber" class="form-control" placeholder="Ej: 76543210"
-                       type="tel" pattern="[0-9]{8}" required />
+                       type="tel" pattern="[0-9]{8}" value="" required />
                 <span asp-validation-for="Technician.PhoneNumber" class="text-danger small"></span>
                 <div class="invalid-feedback">
                     El teléfono debe tener exactamente 8 dígitos.
@@ -110,6 +110,7 @@
             <div class="col-md-6">
                 <label asp-for="Technician.BaseSalary" class="form-label">Salario Base (Bs.-)*</label>
                 <input asp-for="Technician.BaseSalary" class="form-control"
+                        value=""
                        placeholder="Ej: 2500.00"
                        required pattern="^\d+(\.\d{1,2})?$"
                        title="Solo se permiten números y un punto decimal (hasta dos decimales)."
@@ -159,30 +160,51 @@
         $(document).ready(function () {
             const form = $('#technicianForm')[0];
 
-            // Validaciones de letras
-            function letraPermitida(e) {
-                const allowed = /^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]$/;
+            // Validación de letras y caracteres permitidos
+            function letraPermitida(e, isAddress = false) {
+                const allowedLetters = /^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]$/;
+                const allowedAddress = /^[A-Za-zÁÉÍÓÚáéíóúÑñÜü0-9\s,./\-#()]*$/;
                 const ch = String.fromCharCode(e.which);
-                if (!allowed.test(ch) && e.which !== 8 && e.which !== 0) e.preventDefault();
+                if (isAddress) {
+                    if (!allowedAddress.test(ch) && e.which !== 8 && e.which !== 0) e.preventDefault();
+                } else {
+                    if (!allowedLetters.test(ch) && e.which !== 8 && e.which !== 0) e.preventDefault();
+                }
             }
-            ['#Form_Name','#Form_FirstLastName','#Form_SecondLastName'].forEach(id => {
-                $(id).on('keypress', letraPermitida);
+
+            // Nombres y apellidos: solo letras, convertir a mayúsculas
+            ['#Technician_Name','#Technician_FirstLastName','#Technician_SecondLastName'].forEach(id => {
+               $(id).on('keypress', function(e){ letraPermitida(e); });
+               $(id).on('input', function(){ this.value = this.value.toUpperCase(); });
             });
 
-            // Teléfono y CI solo números
-            $('#Form_PhoneNumber, #Form_DocumentNumber').on('keypress', function (e) {
+            // Dirección: caracteres permitidos, NO convertir a mayúsculas
+            $('#Technician_Address').on('keypress', function(e){ letraPermitida(e, true); });
+
+            // Extensión de documento: convertir a mayúsculas automáticamente
+            $('#Technician_DocumentExtension').on('input', function(){
+                this.value = this.value.toUpperCase();
+            });
+
+            // Teléfono y CI: solo números
+            $('#Technician_PhoneNumber, #Technician_DocumentNumber').on('keypress', function (e) {
                 if (e.which < 48 || e.which > 57) e.preventDefault();
             });
 
-            $('#Form_PhoneNumber').on('input', function () {
+            // Validar longitud de Teléfono (exactamente 8)
+            $('#Technician_PhoneNumber').on('input', function () {
+                this.value = this.value.replace(/\D/g, '');
                 if (this.value.length > 8) this.value = this.value.slice(0, 8);
             });
-            $('#Form_DocumentNumber').on('input', function () {
+
+            // Validar longitud de Documento (6 a 10)
+            $('#Technician_DocumentNumber').on('input', function () {
+                this.value = this.value.replace(/\D/g, '');
                 if (this.value.length > 10) this.value = this.value.slice(0, 10);
             });
 
             // Salario decimal
-            $('#Form_BaseSalary').on('keypress', function(e){
+            $('#Technician_BaseSalary').on('keypress', function(e){
                 const ch = String.fromCharCode(e.which);
                 const allowed = /^[0-9.]$/;
                 if (!allowed.test(ch) && e.which !== 8 && e.which !== 0) e.preventDefault();

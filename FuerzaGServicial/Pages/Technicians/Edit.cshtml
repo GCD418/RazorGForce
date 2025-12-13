@@ -145,43 +145,64 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            function letraPermitida(e) {
-                const allowed = /^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]$/;
-                const ch = String.fromCharCode(e.which);
-                if (!allowed.test(ch) && e.which !== 8 && e.which !== 0) e.preventDefault();
-            }
-
+            const form = $('#technicianForm')[0];
             const nombreInput = $("#Form_Name")[0];
             const apellidoPInput = $("#Form_FirstLastName")[0];
             const apellidoMInput = $("#Form_SecondLastName")[0];
 
-            [nombreInput, apellidoPInput, apellidoMInput].forEach(el => el && el.addEventListener("keypress", letraPermitida));
+            // Validación de letras y caracteres permitidos
+            function letraPermitida(e, isAddress = false) {
+                const allowedLetters = /^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]$/;
+                const allowedAddress = /^[A-Za-zÁÉÍÓÚáéíóúÑñÜü0-9\s,./\-#()]*$/;
+                const ch = String.fromCharCode(e.which);
+                if (isAddress) {
+                    if (!allowedAddress.test(ch) && e.which !== 8 && e.which !== 0) e.preventDefault();
+                } else {
+                    if (!allowedLetters.test(ch) && e.which !== 8 && e.which !== 0) e.preventDefault();
+                }
+            }
 
-            $('#Form_PhoneNumber, #Form_DocumentNumber').on('keypress', function (e) {
+            // Nombres y apellidos: validación y mayúsculas
+            ['#Technician_Name','#Technician_FirstLastName','#Technician_SecondLastName'].forEach(id => {
+               $(id).on('keypress', function(e){ letraPermitida(e); });
+               $(id).on('input', function(){ this.value = this.value.toUpperCase(); });
+            });
+
+            // Dirección: caracteres permitidos, no mayúsculas automáticas
+            $('#Technician_Address').on('keypress', function(e){ letraPermitida(e, true); });
+
+            // Documento extensión: convertir a mayúscula automáticamente
+            $('#Technician_DocumentExtension').on('input', function(){ this.value = this.value.toUpperCase(); });
+
+            // Teléfono y CI solo números
+            $('#Technician_PhoneNumber, #Technician_DocumentNumber').on('keypress', function (e) {
                 if (e.which < 48 || e.which > 57) e.preventDefault();
             });
 
-            $('#Form_PhoneNumber').on('input', function () {
+            // Validar longitud de Teléfono (exactamente 8)
+            $('#Technician_PhoneNumber').on('input', function () {
+                this.value = this.value.replace(/\D/g, '');
                 if (this.value.length > 8) this.value = this.value.slice(0, 8);
             });
-            $('#Form_DocumentNumber').on('input', function () {
-                if (this.value.length > 9) this.value = this.value.slice(0, 9);
+
+            // Validar longitud de Documento (6 a 10)
+            $('#Technician_DocumentNumber').on('input', function () {
+                this.value = this.value.replace(/\D/g, '');
+                if (this.value.length > 10) this.value = this.value.slice(0, 10);
             });
 
-            const baseSalaryInput = $("#Form_BaseSalary")[0];
-            if (baseSalaryInput) {
-                baseSalaryInput.addEventListener("keypress", function (e) {
-                    const ch = String.fromCharCode(e.which);
-                    const allowed = /^[0-9.]$/;
-                    if (!allowed.test(ch) && e.which !== 8 && e.which !== 0) e.preventDefault();
-                    if (ch === '.' && this.value.includes('.')) e.preventDefault();
-                });
-                baseSalaryInput.addEventListener("input", function () {
-                    const match = this.value.match(/^(\d+(\.\d{0,2})?)?/);
-                    if (match) this.value = match[0];
-                });
-            }
+            // Salario decimal
+            $('#Technician_BaseSalary').on('keypress', function(e){
+                const ch = String.fromCharCode(e.which);
+                const allowed = /^[0-9.]$/;
+                if (!allowed.test(ch) && e.which !== 8 && e.which !== 0) e.preventDefault();
+                if (ch === '.' && this.value.includes('.')) e.preventDefault();
+            }).on('input', function() {
+                const match = this.value.match(/^(\d+(\.\d{0,2})?)?/);
+                if(match) this.value = match[0];
+            });
 
+            // Alertas dinámicas de validación
             $('input, textarea').on('input', function () {
                 const field = $(this);
                 const validIcon = field.siblings('.valid-icon');
@@ -198,12 +219,11 @@
                 }
             });
 
+            // Submit con animación
             $('#technicianForm').on('submit', function(e) {
-                e.preventDefault();
-                const form = this;
-
-                if (!form.checkValidity()) {
-                    $(form).addClass('was-validated');
+                if(!form.checkValidity()){
+                    e.preventDefault();
+                    form.classList.add('was-validated');
                     return;
                 }
 
