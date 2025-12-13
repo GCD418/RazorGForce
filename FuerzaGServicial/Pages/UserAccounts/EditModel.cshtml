@@ -129,35 +129,61 @@
 
     <script>
         $(document).ready(function () {
-            var form = $('#userAccountForm')[0];
+            const form = $('#userAccountForm')[0];
 
+            const upperInputs = [
+                '#UserAccount_Name',
+                '#UserAccount_FirstLastName',
+                '#UserAccount_SecondLastName'
+            ];
+
+            const phoneInput = $('#UserAccount_PhoneNumber');
+            const docInput = $('#UserAccount_DocumentNumber');
+            const complementoInput = $('#Form_Complement');
+            const emailInput = $('#UserAccount_Email');
+
+             //  SOLO LETRAS + MAYÚSCULAS
             function letraPermitida(e) {
                 const allowed = /^[A-Za-zÁÉÍÓÚáéíóúÑñüÜ\s'-]$/;
-                const ch = e.key; 
-                if (!allowed.test(ch) && ch !== "Backspace" && ch !== "Tab") e.preventDefault();
+                const ch = e.key;
+                if (!allowed.test(ch) && ch !== "Backspace" && ch !== "Tab") {
+                    e.preventDefault();
+                }
             }
 
-            $('#UserAccount_Name, #UserAccount_FirstLastName, #UserAccount_SecondLastName')
-                .on('keydown', letraPermitida);
-
-            $('#UserAccount_PhoneNumber, #UserAccount_DocumentNumber')
-                .on('input', function () {
-                    this.value = this.value.replace(/[^0-9]/g, '');
-                    if (this.id === 'UserAccount_PhoneNumber' && this.value.length > 8)
-                        this.value = this.value.slice(0, 8);
-                    if (this.id === 'UserAccount_DocumentNumber' && this.value.length > 9)
-                        this.value = this.value.slice(0, 9);
+            upperInputs.forEach(selector => {
+                const input = $(selector);
+                input.on('keydown', letraPermitida);
+                input.on('input', function () {
+                    this.value = this.value.toUpperCase();
                 });
-
-            $('#Form_Complement').on('input', function () {
-                this.value = this.value.replace(/[^1-9A-Z]/g, '');
             });
 
-            $('#UserAccount_Email').on('input', function () {
+              // TELÉFONO Y DOCUMENTO
+            phoneInput.add(docInput).on('input', function () {
+                this.value = this.value.replace(/[^0-9]/g, '');
+
+                if (this.id === 'UserAccount_PhoneNumber' && this.value.length > 8)
+                    this.value = this.value.slice(0, 8);
+
+                if (this.id === 'UserAccount_DocumentNumber' && this.value.length > 9)
+                    this.value = this.value.slice(0, 9);
+            });
+
+             //  COMPLEMENTO (AUTO MAYÚSCULA)
+            complementoInput.on('input', function () {
+                this.value = this.value
+                    .toUpperCase()
+                    .replace(/[^1-9A-Z]/g, '')
+                    .slice(0, 2);
+            });
+
+             //  EMAIL (NO MAYÚSCULAS)
+            emailInput.on('input', function () {
                 this.value = this.value.replace(/[^a-zA-Z0-9._@@]/g, '');
             });
 
-
+              // VALIDACIONES VISUALES
             $('input, select').on('input', function () {
                 const field = $(this);
 
@@ -173,9 +199,10 @@
                 }
             });
 
+            //SUBMIT
 
-            $(form).on('submit', function(e){
-                if(!form.checkValidity()){
+            $(form).on('submit', function (e) {
+                if (!form.checkValidity()) {
                     e.preventDefault();
                     form.classList.add('was-validated');
                     return;
